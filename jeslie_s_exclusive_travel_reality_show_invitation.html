@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>《預算東西軍：旅遊體驗篇》專屬邀請函：Jeslie 您好</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & Noto Serif TC -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        emerald: {
+                            850: '#064e3b',
+                            900: '#022c22',
+                        },
+                        sand: {
+                            50: '#fdfbf7',
+                            100: '#f5f0e6',
+                            200: '#e6dbcd',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Noto Serif TC', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', 'Noto Serif TC', sans-serif;
+            background-color: #fdfbf7;
+            color: #1f2937;
+        }
+        .hero-bg {
+            background: linear-gradient(135deg, rgba(2, 44, 34, 0.92) 0%, rgba(6, 78, 59, 0.85) 100%), url('https://placehold.co/1920x1080/064e3b/ffffff?text=Bali+Resort+Background') center/cover no-repeat;
+        }
+    </style>
+</head>
+<body class="bg-sand-50 antialiased selection:bg-emerald-800 selection:text-white">
+
+    <!-- Toast Notification Modal / Box -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-32 opacity-0 transition-all duration-300 ease-out bg-emerald-900 text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center space-x-3 border border-emerald-700">
+        <i class="fa-solid fa-circle-check text-yellow-400 text-xl"></i>
+        <div>
+            <h4 class="font-bold text-sm">邀請回覆已送出！</h4>
+            <p id="toast-msg" class="text-xs text-sand-200">太棒了！期待與妳一起聯手創造無限可能！</p>
+        </div>
+    </div>
+
+    <!-- Navigation Header -->
+    <header class="sticky top-0 z-40 bg-sand-50/90 backdrop-blur-md border-b border-sand-200">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-full bg-emerald-900 text-yellow-400 flex items-center justify-center font-bold font-serif text-lg shadow-md">
+                    9M
+                </div>
+                <div>
+                    <span class="text-xs tracking-wider text-emerald-800 font-semibold uppercase block">喬瑞旅行社企劃</span>
+                    <span class="text-sm font-bold text-slate-800">預算東西軍：旅遊體驗篇</span>
+                </div>
+            </div>
+            <nav class="hidden md:flex items-center space-x-8 text-sm font-medium text-slate-600">
+                <a href="#about" class="hover:text-emerald-800 transition">節目企劃</a>
+                <a href="#why-you" class="hover:text-emerald-800 transition">特別邀請</a>
+                <a href="#benefits" class="hover:text-emerald-800 transition">妳的收穫</a>
+                <a href="#resources" class="hover:text-emerald-800 transition">雙軌資源</a>
+            </nav>
+            <div>
+                <a href="#rsvp" class="bg-emerald-900 hover:bg-emerald-800 text-yellow-400 font-medium px-5 py-2.5 rounded-full text-sm shadow-lg hover:shadow-xl transition transform active:scale-95 flex items-center space-x-2">
+                    <i class="fa-solid fa-paper-plane text-xs"></i>
+                    <span>立即回覆</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-bg text-white py-20 lg:py-32 relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px]"></div>
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+            <span class="inline-block bg-yellow-400/20 text-yellow-300 border border-yellow-400/40 text-xs font-semibold px-4 py-1.5 rounded-full mb-6 tracking-widest uppercase">
+                Exclusive Personal Invitation • 專屬特別邀請
+            </span>
+            <h1 class="font-serif text-3xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6">
+                《預算東西軍：旅遊體驗篇》<br>
+                <span class="text-yellow-400 font-sans text-2xl sm:text-4xl mt-3 block">第一季：印尼峇里島 5 天 4 夜</span>
+            </h1>
+            <p class="text-lg sm:text-xl text-sand-100/90 max-w-2xl mx-auto font-light leading-relaxed mb-10">
+                Hi～Jeslie 您好：我是 9M。這是一場結合實境冒險、旅遊對決與個人品牌升級的全新企劃，想特別親自邀請妳一起加入！
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4">
+                <a href="#about" class="w-full sm:w-auto bg-yellow-400 hover:bg-yellow-300 text-emerald-950 font-bold px-8 py-4 rounded-xl shadow-xl transition transform hover:-translate-y-0.5 text-center flex items-center justify-center space-x-2">
+                    <span>展開邀請函內容</span>
+                    <i class="fa-solid fa-arrow-down text-xs"></i>
+                </a>
+                <a href="#rsvp" class="w-full sm:w-auto bg-white/10 hover:bg-white/20 border border-white/30 text-white font-medium px-8 py-4 rounded-xl backdrop-blur-sm transition text-center">
+                    直接前往回覆
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content Container -->
+    <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-20">
+
+        <!-- Section 1: 節目介紹 -->
+        <section id="about" class="bg-white rounded-3xl p-8 sm:p-12 shadow-xl border border-sand-200">
+            <div class="flex items-center space-x-3 mb-6">
+                <div class="w-8 h-8 rounded-lg bg-emerald-900 text-yellow-400 flex items-center justify-center font-bold text-sm">01</div>
+                <h2 class="font-serif text-2xl sm:text-3xl font-bold text-emerald-950">這是一個什麼樣的節目？</h2>
+            </div>
+            
+            <p class="text-slate-600 leading-relaxed mb-8 text-base sm:text-lg">
+                這不是單純走馬看花、介紹景點的傳統旅遊影片，而是一場結合兩種極致旅遊方式的實境對決！我們將邀請四位嘉賓分成東、西兩隊，安排相同等級的住宿（度假村及私人 Villa），真正去比較：
+            </p>
+
+            <div class="bg-emerald-900/5 border border-emerald-900/10 p-6 rounded-2xl mb-10 text-center">
+                <span class="text-xs font-bold uppercase tracking-widest text-emerald-800 block mb-2">節目核心哲學</span>
+                <p class="font-serif text-xl sm:text-2xl font-bold text-emerald-950">
+                    「每一塊錢，究竟能換回多少時間與體驗價值？」
+                </p>
+            </div>
+
+            <!-- Interactive Team Comparison Tabs -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- East Team -->
+                <div class="bg-sand-50 border-2 border-emerald-900/20 rounded-2xl p-6 transition hover:shadow-lg">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-10 h-10 rounded-full bg-orange-500 text-white flex items-center justify-center font-bold">
+                            <i class="fa-solid fa-compass"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs text-orange-600 font-bold uppercase">東軍組別</span>
+                            <h3 class="font-bold text-lg text-slate-900">【極致自由行組】冒險特種兵</h3>
+                        </div>
+                    </div>
+                    <ul class="space-y-3 text-sm text-slate-600">
+                        <li class="flex items-start space-x-2">
+                            <i class="fa-solid fa-check text-emerald-700 mt-1"></i>
+                            <span>自己規劃交通，搭 Grab 或在地移動</span>
+                        </li>
+                        <li class="flex items-start space-x-2">
+                            <i class="fa-solid fa-check text-emerald-700 mt-1"></i>
+                            <span>查 Google Maps、尋找私房景點與美食</span>
+                        </li>
+                        <li class="flex items-start space-x-2">
+                            <i class="fa-solid fa-check text-emerald-700 mt-1"></i>
+                            <span>在大街小巷中自由探索、殺價與挑戰任務</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- West Team -->
+                <div class="bg-sand-50 border-2 border-emerald-900/20 rounded-2xl p-6 transition hover:shadow-lg">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-10 h-10 rounded-full bg-emerald-800 text-white flex items-center justify-center font-bold">
+                            <i class="fa-solid fa-crown"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs text-emerald-800 font-bold uppercase">西軍組別</span>
+                            <h3 class="font-bold text-lg text-slate-900">【精緻小團組】尊榮享受派</h3>
+                        </div>
+                    </div>
+                    <ul class="space-y-3 text-sm text-slate-600">
+                        <li class="flex items-start space-x-2">
+                            <i class="fa-solid fa-check text-emerald-700 mt-1"></i>
+                            <span>安排專屬包車、在地司機及中文導遊</span>
+                        </li>
+                        <li class="flex items-start space-x-2">
+                            <i class="fa-solid fa-check text-emerald-700 mt-1"></i>
+                            <span>不必煩惱繁瑣交通與路線規劃</span>
+                        </li>
+                        <li class="flex items-start space-x-2">
+                            <i class="fa-solid fa-check text-emerald-700 mt-1"></i>
+                            <span>將時間留給度假、享受更輕鬆便利的旅行</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: 為什麼我特別想邀請妳？ -->
+        <section id="why-you" class="bg-white rounded-3xl p-8 sm:p-12 shadow-xl border border-sand-200">
+            <div class="flex items-center space-x-3 mb-6">
+                <div class="w-8 h-8 rounded-lg bg-emerald-900 text-yellow-400 flex items-center justify-center font-bold text-sm">02</div>
+                <h2 class="font-serif text-2xl sm:text-3xl font-bold text-emerald-950">為什麼我特別想邀請妳？</h2>
+            </div>
+            
+            <div class="space-y-4 text-slate-600 leading-relaxed text-base sm:text-lg">
+                <p>
+                    我想到妳，是因為我認為這次企劃對妳、對我，甚至對各自的事業發展來說，都不只是一次出國旅遊，更是一次建立產品曝光、個人知名度與專業形象的新起點。
+                </p>
+                <p>
+                    之前我們聊過，妳曾問我為什麼不找自己公司的同事。其實想法很單純：同公司夥伴有著相近的工作環境與銷售管道，能接觸到的圈子比較受限。因此，我更希望能邀請不同生活圈、不同產業背景，同時具備社群或業務推廣能力的人一起參與，讓節目接觸到更多元的受眾。
+                </p>
+                <div class="bg-sand-100 p-6 rounded-2xl border-l-4 border-emerald-800 my-6">
+                    <p class="font-serif italic text-emerald-950 font-semibold">
+                        「目前接觸的合作對象包含廣告商、TVBS 小編及同業等。大家都有一個共同特質：喜歡旅遊、懂得體驗，也具備一定的推廣能力。而妳，正是我認為非常適合的人選。」
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: 參與這次企劃，能為妳帶來什麼？ -->
+        <section id="benefits" class="bg-white rounded-3xl p-8 sm:p-12 shadow-xl border border-sand-200">
+            <div class="flex items-center space-x-3 mb-8">
+                <div class="w-8 h-8 rounded-lg bg-emerald-900 text-yellow-400 flex items-center justify-center font-bold text-sm">03</div>
+                <h2 class="font-serif text-2xl sm:text-3xl font-bold text-emerald-950">參與這次企劃，能為妳帶來什麼？</h2>
+            </div>
+
+            <div class="grid grid-cols-1 gap-8">
+                <!-- Benefit 1 -->
+                <div class="flex space-x-4 items-start bg-sand-50 p-6 rounded-2xl">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-900 text-yellow-400 flex-shrink-0 flex items-center justify-center font-bold text-lg">1</div>
+                    <div>
+                        <h3 class="font-bold text-lg text-slate-900 mb-2">讓客戶真正認識「妳」，而不只是認識旅行社</h3>
+                        <p class="text-slate-600 text-sm sm:text-base leading-relaxed">
+                            在旅展或日常銷售中，客戶面對的往往是不同的公司與大同小異的商品。如果客戶曾經在影片中看過妳、了解妳的個性與旅遊觀點，未來當他們有需求時，妳就不再只是眾多陌生業務中的一位，而是他們有印象、甚至願意主動聯繫的旅遊顧問。未來在旅展或向客戶介紹時，這段影片就是最好的個人專業展示素材。
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Benefit 2 -->
+                <div class="flex space-x-4 items-start bg-sand-50 p-6 rounded-2xl">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-900 text-yellow-400 flex-shrink-0 flex items-center justify-center font-bold text-lg">2</div>
+                    <div>
+                        <h3 class="font-bold text-lg text-slate-900 mb-2">曝光不只是暫時的，還能轉化成實際的合作與收入</h3>
+                        <p class="text-slate-600 text-sm sm:text-base leading-relaxed">
+                            這次拍攝不只是影片上架就結束。我的想法是，將節目中實際體驗過的峇里島精緻小團與客製化行程，進一步規劃成觀眾可以購買的商品。當觀眾看完影片感興趣時，後續的行程銷售可以透過雙方談定的合作方式進行分潤。也就是說，這次參與不只是增加曝光，更有機會轉化成實際的業績與客戶來源。
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Benefit 3 -->
+                <div class="flex space-x-4 items-start bg-sand-50 p-6 rounded-2xl">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-900 text-yellow-400 flex-shrink-0 flex items-center justify-center font-bold text-lg">3</div>
+                    <div>
+                        <h3 class="font-bold text-lg text-slate-900 mb-2">累積個人辨識度，為未來職涯創造更多可能</h3>
+                        <p class="text-slate-600 text-sm sm:text-base leading-relaxed">
+                            旅遊業未來的競爭不會只停留在價格與產品。如果我們能透過這次機會，讓客戶不僅是看到行程，更能記得妳、認同妳的旅遊觀點，那我們就不只是在賣一趟團，而是一起在幫妳建立具有個人特色與信任感的旅遊顧問品牌。這次累積的影片與口碑，無論是經營老客戶還是拓展新市場，都會是最珍貴的資產。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: 雙軌資源互補 (Dual-Agency Resources) -->
+        <section id="resources" class="bg-white rounded-3xl p-8 sm:p-12 shadow-xl border border-sand-200">
+            <div class="flex items-center space-x-3 mb-6">
+                <div class="w-8 h-8 rounded-lg bg-emerald-900 text-yellow-400 flex items-center justify-center font-bold text-sm">04</div>
+                <h2 class="font-serif text-2xl sm:text-3xl font-bold text-emerald-950">雙軌資源互補，讓業務機會不受地區限制</h2>
+            </div>
+            
+            <p class="text-slate-600 mb-8 text-base">
+                我也特別考量到妳目前在「找到了」旅行社的角色，希望這次合作能與妳原本的工作相互加乘，而不是讓妳必須放棄既有資源：
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <!-- Bali / Chiao Jui -->
+                <div class="bg-emerald-900/5 border border-emerald-900/20 rounded-2xl p-6">
+                    <span class="text-xs font-bold text-emerald-800 uppercase tracking-wider block mb-1">喬瑞旅行社資源</span>
+                    <h3 class="font-bold text-xl text-emerald-950 mb-3">峇里島客製化行程與精緻小團</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">
+                        若觀眾看完影片想詢問峇里島這類型的需求，可以由我這邊的喬瑞旅行社協助規劃與承接。妳可以參與客戶推廣與銷售（採同業合作模式），讓節目內容延伸成實際商品。
+                    </p>
+                </div>
+
+                <!-- Other regions / Found Travel -->
+                <div class="bg-emerald-900/5 border border-emerald-900/20 rounded-2xl p-6">
+                    <span class="text-xs font-bold text-emerald-800 uppercase tracking-wider block mb-1">找到了旅行社資源</span>
+                    <h3 class="font-bold text-xl text-emerald-950 mb-3">日本、韓國、歐洲等其他國家地區</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">
+                        如果有人因為影片認識妳，進一步詢問其他地區的需求，妳完全可以運用妳目前在「找到了」既有的行程與產品資源，延續客戶服務與銷售機會。
+                    </p>
+                </div>
+            </div>
+
+            <div class="bg-emerald-950 text-sand-50 p-6 rounded-2xl text-center shadow-md">
+                <span class="text-xs text-yellow-400 font-bold uppercase tracking-widest block mb-2">合作公式總結</span>
+                <p class="font-serif text-lg sm:text-xl font-semibold">
+                    峇里島行程（喬瑞）+ 其他地區（原公司）+ 妳自己（個人品牌與信任）
+                </p>
+            </div>
+        </section>
+
+        <!-- Section 5: 參與內容與長期價值 -->
+        <section class="bg-white rounded-3xl p-8 sm:p-12 shadow-xl border border-sand-200">
+            <div class="flex items-center space-x-3 mb-6">
+                <div class="w-8 h-8 rounded-lg bg-emerald-900 text-yellow-400 flex items-center justify-center font-bold text-sm">05</div>
+                <h2 class="font-serif text-2xl sm:text-3xl font-bold text-emerald-950">這次節目，妳將參與什麼？</h2>
+            </div>
+
+            <div class="space-y-6 text-slate-600 leading-relaxed text-base">
+                <p>
+                    《預算東西軍：旅遊體驗篇》第一季預計前往峇里島拍攝 5 天 4 夜，透過東、西兩隊不同的旅遊方式，呈現自由旅行與專人安排的體驗差異。
+                </p>
+                <p>
+                    我希望妳能以旅行社業務的專業視角加入，不只是體驗旅遊，更能讓觀眾看見一位真正懂旅遊、懂行程，也懂得如何替客戶規劃旅行的專業人士。拍攝與後製會由製作團隊負責，相關旅遊費用也會依照事前確認的合作範圍安排。
+                </p>
+
+                <div class="bg-yellow-50 border border-yellow-200 p-6 rounded-2xl text-slate-800">
+                    <h4 class="font-bold text-emerald-950 mb-3 flex items-center space-x-2">
+                        <i class="fa-solid fa-star text-yellow-500"></i>
+                        <span>這次合作帶給妳的長期價值</span>
+                    </h4>
+                    <p class="font-serif font-bold text-center text-emerald-900 text-lg py-2">
+                        我們公司的節目曝光 × 個人品牌 × 客戶信任 × 旅遊銷售機會 × 既有旅行社資源
+                    </p>
+                    <p class="text-sm text-center text-slate-600 mt-2">
+                        與其把它當成一次出國拍攝，不如把它看成一次讓更多人認識妳、累積個人形象，並為未來創造更多業務可能性的開始。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 6: RSVP / Call to Action -->
+        <section id="rsvp" class="bg-gradient-to-br from-emerald-900 to-emerald-950 text-white rounded-3xl p-8 sm:p-12 shadow-2xl relative overflow-hidden text-center">
+            <div class="absolute -right-12 -bottom-12 w-64 h-64 bg-yellow-400/10 rounded-full blur-3xl pointer-events-none"></div>
+            
+            <span class="text-xs font-bold text-yellow-400 uppercase tracking-widest block mb-3">RSVP • 期待妳的回覆</span>
+            <h2 class="font-serif text-3xl sm:text-4xl font-bold mb-4">一起創造一個機會，出發峇里島！</h2>
+            <p class="text-sand-200 max-w-xl mx-auto mb-8 text-sm sm:text-base leading-relaxed">
+                如果您對這個企劃有興趣，或想先聊聊看細節，隨時可以用 LINE 跟 9M 聯繫聊聊！期待妳一起加入這場峇里島東西軍的對決。
+            </p>
+
+            <div class="text-xs text-sand-200/80 space-y-1">
+                <p><strong class="text-white">邀請人：</strong> 9M（喬瑞旅行社節目製作團隊）</p>
+                <p><strong class="text-white">專屬對象：</strong> Jeslie</p>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-emerald-950 text-sand-200/60 py-10 border-t border-emerald-900/50 text-center text-xs">
+        <div class="max-w-4xl mx-auto px-4 space-y-2">
+            <p>© 2026 喬瑞旅行社 • 《預算東西軍：旅遊體驗篇》第一季製作團隊</p>
+            <p>All Rights Reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>
