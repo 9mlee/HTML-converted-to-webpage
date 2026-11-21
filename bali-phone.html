@@ -1,0 +1,1168 @@
+<title>峇里島地圖</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap">
+<style>
+/* 版面：頂部篩選列，下方是可縮放拖曳的整張插畫地圖；資訊面板浮在左下角海面，窄螢幕時接在地圖下方 */
+:root{
+  --bg:#EEF7F3; --surface:#FFFFFF; --ink:#2C4A41; --muted:#5F7B70; --line:#D3E6DC; --frame:#FFFFFF;
+  --sea:#BFE8EC; --shallow:#D7F2F1; --wave:#FFFFFF; --sand:#F8E9B8; --grass:#B7E28F; --lake:#8CD2EA; --terr:#8FC96A;
+  --crown:#63B66E; --crown2:#4FA662; --trunk:#A9805A; --cloud:rgba(255,255,255,.8);
+  --spot:#3B9EF0; --hotel:#E9A91C; --food:#F0607A; --act:#FF8C42; --club:#A66CE8; --shop:#2E8B57; --spa:#D9699F; --other:#2FBFA5;
+  --halo:#FFFFFF; --btn:#2C4A41; --btn-fg:#FFFFFF; --focus:#5B7CFF;
+  --font:"Huninn","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F1D1B; --surface:#182A27; --ink:#E4F2EB; --muted:#94B1A5; --line:#2B4640; --frame:#2B4640;
+    --sea:#1D4A57; --shallow:#25606B; --wave:#9ADBE4; --sand:#8F8156; --grass:#4F8247; --lake:#2F7185; --terr:#6BA35A;
+    --crown:#33704A; --crown2:#2A5E3F; --trunk:#7C5E42; --cloud:rgba(255,255,255,.2);
+    --spot:#6BB8F5; --hotel:#F2BC55; --food:#F68CA0; --act:#FF9F6B; --club:#BE90F0; --shop:#5DBB88; --spa:#EC8FBB; --other:#4FD1B5;
+    --halo:#12302B; --btn:#E4F2EB; --btn-fg:#0F1D1B; --focus:#9AB3FF;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F1D1B; --surface:#182A27; --ink:#E4F2EB; --muted:#94B1A5; --line:#2B4640; --frame:#2B4640;
+  --sea:#1D4A57; --shallow:#25606B; --wave:#9ADBE4; --sand:#8F8156; --grass:#4F8247; --lake:#2F7185; --terr:#6BA35A;
+  --crown:#33704A; --crown2:#2A5E3F; --trunk:#7C5E42; --cloud:rgba(255,255,255,.2);
+  --spot:#6BB8F5; --hotel:#F2BC55; --food:#F68CA0; --act:#FF9F6B; --club:#BE90F0; --shop:#5DBB88; --spa:#EC8FBB; --other:#4FD1B5;
+  --halo:#12302B; --btn:#E4F2EB; --btn-fg:#0F1D1B; --focus:#9AB3FF;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{
+  background:var(--bg); color:var(--ink); font-family:var(--font); font-size:15px; line-height:1.7;
+  padding-inline:max(16px, env(safe-area-inset-left, 0px)) max(16px, env(safe-area-inset-right, 0px));
+  padding-block:20px 40px;
+}
+.wrap{max-width:1800px; margin:0 auto; display:grid; gap:14px}
+h1{font-size:clamp(24px,3.4vw,32px); line-height:1.25; margin:0; font-weight:400; text-wrap:balance}
+.sub{margin:4px 0 0; color:var(--muted); max-width:60ch; font-size:14px}
+.sr{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
+
+/* 篩選列 */
+.toolbar{display:grid; gap:10px}
+.cats{display:flex; flex-wrap:wrap; gap:8px; border:0; margin:0; padding:0; min-width:0}
+.cat{display:inline-flex; align-items:center; border:2px solid var(--line); border-radius:999px; background:var(--surface); position:relative; transition:opacity .15s}
+.cat.off{opacity:.62}
+.cat label{display:flex; align-items:center; gap:8px; padding:5px 6px 5px 12px; min-height:40px; cursor:pointer}
+.cat input{position:absolute; opacity:0; width:1px; height:1px}
+.sw{width:20px; height:20px; border-radius:7px; border:2px solid var(--pin); background:transparent; display:grid; place-items:center; flex:none}
+.cat input:checked + .sw{background:var(--pin)}
+.cat input:checked + .sw::after{content:""; width:5px; height:9px; border:solid #fff; border-width:0 2.5px 2.5px 0; transform:translateY(-1px) rotate(45deg)}
+.cat input:focus-visible + .sw{outline:3px solid var(--focus); outline-offset:2px}
+.cat .n{color:var(--muted); font-size:13px}
+.solo{font:inherit; font-size:12px; color:var(--muted); background:none; border:0; border-radius:999px; padding:2px 10px 2px 6px; margin-right:4px; min-height:30px; cursor:pointer}
+.solo:hover{background:var(--bg); color:var(--ink)}
+.subs{align-items:center}
+.subs .cat{--pin:var(--muted)}
+.subs .cat label{min-height:34px; padding:3px 12px 3px 10px; font-size:14px}
+.subs .sw{width:18px; height:18px; border-radius:6px}
+.subtitle{color:var(--muted); font-size:13px; margin-right:2px}
+.row2{display:flex; flex-wrap:wrap; gap:8px 10px; align-items:center}
+.field{
+  font:inherit; color:var(--ink); background:var(--surface); border:2px solid var(--line); border-radius:999px;
+  min-height:40px; padding:4px 16px; min-width:0;
+}
+#q{width:min(260px,100%)}
+.btn{
+  font:inherit; color:var(--ink); background:var(--surface); border:2px solid var(--line);
+  min-height:40px; padding:4px 16px; border-radius:999px; cursor:pointer; transition:transform .15s;
+}
+.btn:hover{transform:translateY(-2px)}
+.btn[aria-pressed="true"]{background:var(--ink); color:var(--bg); border-color:var(--ink)}
+.btn.tool{border-style:dashed}
+.count{color:var(--muted); font-size:14px; margin-left:auto}
+.field:focus-visible, .btn:focus-visible, .go:focus-visible, .row:focus-visible, .mini:focus-visible, .solo:focus-visible, .zbtn:focus-visible{outline:3px solid var(--focus); outline-offset:2px}
+
+/* 地圖 */
+.mapbox{position:relative; border-radius:28px; border:5px solid var(--frame); background:var(--sea); overflow:hidden; min-width:0}
+#map{display:block; width:100%; height:auto; aspect-ratio:1400/900; touch-action:none; cursor:grab; user-select:none; -webkit-user-select:none}
+#map.dragging{cursor:grabbing}
+.mapbox.placing #map{cursor:crosshair}
+.mapbox.placing .pin, .mapbox.placing .cluster{pointer-events:none}
+.mapbox.editing .pin{cursor:grab}
+.mapbox.editing .pin:active{cursor:grabbing}
+@media (max-width:699px){ #map{aspect-ratio:4/3} }
+.zoom{position:absolute; top:12px; right:12px; display:grid; gap:6px; z-index:2}
+.zbtn{
+  width:42px; height:42px; border-radius:14px; border:2px solid var(--line); background:var(--surface); color:var(--ink);
+  font:inherit; font-size:22px; line-height:1; cursor:pointer; display:grid; place-items:center; box-shadow:0 4px 12px rgba(20,60,50,.15);
+}
+.zbtn:hover{transform:translateY(-1px)}
+.zbtn.fit{font-size:15px}
+.maphint{
+  position:absolute; left:12px; top:12px; font-size:12px; color:var(--ink); background:color-mix(in srgb, var(--surface) 82%, transparent);
+  padding:2px 10px; border-radius:999px; pointer-events:none; z-index:2
+}
+.coordbar{
+  display:flex; flex-wrap:wrap; align-items:center; gap:8px 12px; padding:10px 14px;
+  background:var(--surface); border-top:2px solid var(--line); font-size:14px;
+}
+.coordbar[hidden]{display:none}
+.coordbar input{font:inherit; color:var(--ink); background:var(--bg); border:2px solid var(--line); border-radius:12px; padding:4px 10px; width:12.5em; min-width:0}
+.mini{font:inherit; color:var(--btn-fg); background:var(--btn); border:0; border-radius:999px; padding:4px 14px; min-height:34px; cursor:pointer}
+
+
+/* ===== 手機：不用地圖，改成一頁式清單＋篩選 ===== */
+#mlist, #toTop{display:none}
+@media (max-width:999px){
+  body{padding:14px 14px 90px}
+  .wrap{display:block; max-width:none}
+  header{margin-bottom:12px}
+  header h1{font-size:26px} header .sub{display:none}
+  .mapbox{position:fixed; left:-200vw; top:0; width:100vw; height:60vh; visibility:hidden; pointer-events:none}
+  #dock, .sheet-head, .done, #placeBtn, #editBtn, #zoneBtn{display:none !important}
+  .toolbar{display:flex; flex-direction:column; gap:12px}
+  .row2{display:contents}
+  #q{order:1; width:100%} .toolbar #cats{order:2} .toolbar #subs{order:3} #region{order:4; width:100%}
+  #allBtn{order:5} #noneBtn{order:5} .toolbar .zlegend{order:6} .count{order:7; margin:0}
+  .toolbar #allBtn, .toolbar #noneBtn{align-self:flex-start}
+  .toolbar .zlegend{position:static; max-width:none; border:0; padding:0; background:none; display:flex; flex-direction:row; flex-wrap:wrap; gap:8px}
+  .toolbar .zhead{width:100%; pointer-events:none; padding:0; color:var(--muted); font-weight:400} .toolbar .zhead::after{content:none}
+  .toolbar .zlb{display:flex !important}
+  #mlist{display:block; margin-top:16px}
+  #panel{display:none !important}
+  .mzone{margin:0 0 18px}
+  .mzone > summary{position:sticky; top:0; z-index:6; list-style:none; display:flex; align-items:center; gap:10px; padding:10px 4px; background:var(--bg); font-size:21px; cursor:pointer; border-bottom:3px solid var(--zc)}
+  .mzone > summary::-webkit-details-marker{display:none}
+  .mzone > summary i{width:16px; height:16px; border-radius:50%; background:var(--zc); flex:none}
+  .mzone > summary small{color:var(--muted); font-size:15px; margin-left:auto}
+  .mzone > summary::after{content:'▾'; color:var(--muted); transition:transform .2s} .mzone:not([open]) > summary::after{transform:rotate(-90deg)}
+  .mreg{margin:16px 0 4px; font-size:16px; font-weight:400; color:var(--muted)}
+  .mcard{border:2px solid var(--line); border-radius:22px; background:var(--surface); margin:10px 0; overflow:hidden}
+  .mcard > summary{list-style:none; display:flex; align-items:center; gap:12px; padding:12px 14px; min-height:68px; cursor:pointer}
+  .mcard > summary::-webkit-details-marker{display:none}
+  .mcard > summary::after{content:'▾'; margin-left:auto; color:var(--muted); font-size:18px; transition:transform .2s} .mcard[open] > summary::after{transform:rotate(180deg)}
+  .mcard .p-icon{flex:none; width:46px; height:46px}
+  .mcard .mt{display:grid; gap:0; min-width:0; line-height:1.4}
+  .mcard .mt b{font-weight:400; font-size:20px; overflow-wrap:anywhere}
+  .mcard .mt small{color:var(--muted); font-size:15px}
+  .mcard .mbody{padding:0 16px 18px}
+  .mcard .mbody > p{margin:8px 0 0}
+  #toTop{display:grid; place-items:center; position:fixed; right:14px; bottom:calc(16px + env(safe-area-inset-bottom, 0px)); z-index:20; width:56px; height:56px; border-radius:50%;
+    border:2px solid var(--line); background:var(--ink); color:var(--bg); font:inherit; font-size:15px; line-height:1.1; box-shadow:0 6px 18px rgba(0,0,0,.3); opacity:0; pointer-events:none; transition:opacity .2s}
+  #toTop.show{opacity:1; pointer-events:auto}
+}
+
+/* 車程分區 */
+.zf{transition:opacity .2s}
+.zf-fill{opacity:.9} .zf-dots{opacity:1; pointer-events:none} .zf.off{opacity:0}
+.zflag{font-family:var(--font); font-weight:700; font-size:17px; pointer-events:none; transition:opacity .2s}
+.zflag text{stroke:none}
+.zf-line{fill:none; stroke:#fff; stroke-width:5; stroke-linecap:round; stroke-dasharray:.1 11; opacity:.95}
+.zlegend{position:absolute; right:12px; bottom:12px; z-index:3; display:flex; flex-direction:column; gap:6px; padding:8px; background:var(--surface); border:2px solid var(--line); border-radius:20px; max-width:230px}
+.zhead{font:inherit; font-size:14px; font-weight:600; display:flex; align-items:center; justify-content:space-between; gap:10px; min-height:36px; padding:0 8px; border:0; background:none; color:var(--ink); cursor:pointer}
+.zhead::after{content:'▾'; transition:transform .2s} .zlegend.open .zhead::after{transform:rotate(180deg)}
+.zlegend:not(.open) .zlb{display:none}
+.zhead:focus-visible{outline:3px solid var(--focus); outline-offset:2px; border-radius:12px}
+.zlb{font:inherit; font-size:14px; display:flex; align-items:center; gap:8px; text-align:left; min-height:34px; padding:3px 10px; border-radius:999px; border:2px solid var(--line); background:var(--bg); color:var(--ink); cursor:pointer}
+.zlb i{flex:none; width:14px; height:14px; border-radius:50%; background:var(--zc)}
+.zlb small{color:var(--muted); font-size:12px}
+.zlb[aria-pressed=false]{opacity:.45}
+.zlb:focus-visible{outline:3px solid var(--focus); outline-offset:2px}
+@media (max-width:999px){.zlegend{top:56px; left:12px; right:auto; bottom:auto; max-width:200px} .zlb small{display:none}}
+.ztag{display:inline-block; margin-left:6px; padding:1px 10px; border-radius:999px; background:var(--zc); color:#fff; font-size:12px}
+.go.alt2{background:transparent; color:var(--ink); border:2px solid var(--ink); margin-left:8px}
+
+/* 熱門區域色塊 */
+.zone-fill{opacity:.2}
+.zone-line{fill:none; stroke-width:calc(3px * var(--u, 1)); stroke-dasharray:calc(9px * var(--u, 1)) calc(7px * var(--u, 1)); opacity:.75}
+.zone-name{font-family:var(--font); font-weight:700; font-size:calc(26px * var(--u, 1)); stroke:var(--halo); stroke-width:calc(7px * var(--u, 1)); paint-order:stroke; stroke-linejoin:round; pointer-events:none}
+.zone-name .en{font-size:calc(14px * var(--u, 1)); font-weight:500; fill:var(--muted)}
+#map.no-zones .zone-g{display:none}
+.btn[aria-pressed=true]#zoneBtn{background:var(--btn); color:var(--btn-fg)}
+
+/* 小島圖層 */
+.c-grass{fill:var(--grass)}
+.c-lake{fill:var(--lake); stroke:var(--sand); stroke-width:5}
+.c-crown{fill:var(--crown)} .c-crown2{fill:var(--crown2)} .c-trunk{fill:var(--trunk)}
+.c-cloud{fill:var(--cloud)}
+.c-terr{fill:none; stroke:var(--terr); stroke-width:4; stroke-linecap:round}
+.c-wave{fill:none; stroke:var(--wave); stroke-width:3; stroke-linecap:round}
+.wave{animation:wave 4.2s ease-in-out infinite; animation-delay:calc(var(--i) * -.7s)}
+@keyframes wave{0%,100%{opacity:.25; transform:translateX(0)} 50%{opacity:.8; transform:translateX(7px)}}
+.cloud{animation:drift var(--dur) linear infinite; animation-delay:var(--del)}
+@keyframes drift{from{transform:translateX(-260px)} to{transform:translateX(1700px)}}
+.boat{animation:sail 7s ease-in-out infinite}
+@keyframes sail{0%,100%{transform:translate(0,0) rotate(-2deg)} 50%{transform:translate(18px,-3px) rotate(2deg)}}
+.region{font-family:var(--font); font-size:calc(21px * var(--u, 1)); fill:var(--ink); stroke:var(--halo); stroke-width:calc(6px * var(--u, 1)); paint-order:stroke; stroke-linejoin:round; pointer-events:none; opacity:.82}
+.region .en{font-size:calc(13px * var(--u, 1)); fill:var(--muted)}
+
+/* 圖示 */
+.t-spot{--pin:var(--spot)} .t-hotel{--pin:var(--hotel)} .t-food{--pin:var(--food)}
+.t-shop{--pin:var(--shop)} .t-spa{--pin:var(--spa)} .t-act{--pin:var(--act)} .t-club{--pin:var(--club)} .t-other{--pin:var(--other)} .t-mix{--pin:var(--btn)}
+.cut{fill:var(--pin)} .cutl{fill:none; stroke:var(--pin)}
+.pin, .cluster{cursor:pointer; outline:none}
+.pin-shadow{fill:#000; opacity:.16}
+.tail{fill:var(--pin); stroke:#fff; stroke-width:4; stroke-linejoin:round}
+.badge{fill:var(--pin); stroke:#fff; stroke-width:4; stroke-linejoin:round}
+.hit{fill:transparent}
+.ring{fill:none; stroke:var(--pin); stroke-width:4; opacity:0; transform-box:fill-box; transform-origin:center}
+.pin:focus-visible .ring, .cluster:focus-visible .ring{opacity:1}
+.pin.is-pinned .ring{animation:pulse 1.8s ease-out infinite}
+@keyframes pulse{0%{transform:scale(.9); opacity:.9} 100%{transform:scale(1.35); opacity:0}}
+.ctext{font-family:var(--font); font-size:22px; fill:#fff; text-anchor:middle; pointer-events:none}
+.t-mix .ctext{fill:var(--btn-fg)}
+.cluster:hover .cbody, .cluster:focus-visible .cbody{transform:scale(1.1)}
+.cbody{transition:transform .15s}
+.tip{font-family:var(--font); font-size:calc(17px * var(--u, 1)); fill:var(--ink); stroke:var(--halo); stroke-width:calc(6px * var(--u, 1)); paint-order:stroke; stroke-linejoin:round; text-anchor:middle; pointer-events:none}
+.pin-idle{animation:idle 3.2s ease-in-out infinite; animation-delay:calc(var(--i) * -.45s)}
+@keyframes idle{0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)}}
+.pin:hover .pin-body, .pin:focus-visible .pin-body, .pin.is-hot .pin-body, .pin.is-pinned .pin-body{
+  transform:scale(1.1); animation:hop .6s ease both;
+}
+@keyframes hop{
+  0%{transform:translateY(0) scale(1,1)}
+  25%{transform:translateY(-14px) scale(.94,1.08)}
+  55%{transform:translateY(0) scale(1.1,.9)}
+  80%{transform:translateY(-3px) scale(1.06,1.02)}
+  100%{transform:translateY(0) scale(1.1,1.1)}
+}
+
+/* 資訊面板 */
+#panel{position:relative; background:var(--surface); border:2px solid var(--line); padding:20px; min-width:0}
+.p-close{position:absolute; top:10px; right:10px; width:40px; height:40px; border-radius:50%; border:2px solid var(--line); background:var(--bg); color:var(--ink); font:inherit; font-size:20px; line-height:1; cursor:pointer; z-index:1; display:grid; place-items:center}
+.p-close:hover{background:var(--line)}
+.p-close:focus-visible{outline:3px solid var(--focus); outline-offset:2px}
+#panel .p-head{padding-right:44px}
+@media (min-width:1000px){
+  #panel{
+    position:absolute; left:14px; bottom:14px; width:clamp(270px,27%,350px); max-height:46%;
+    overflow-y:auto; border-radius:24px; box-shadow:0 10px 28px rgba(20,60,50,.2); z-index:2;
+  }
+  .mapbox.placing #panel, .mapbox.editing #panel{bottom:76px}
+}
+@media (max-width:999px){ #panel{border-width:2px 0 0 0; border-radius:0} }
+#panel h2{font-size:23px; line-height:1.35; margin:0; font-weight:400; overflow-wrap:anywhere}
+#panel h3{font-size:14px; margin:18px 0 6px; font-weight:400; color:var(--muted)}
+#panel p{margin:10px 0 0}
+.longtext{white-space:pre-line; overflow-wrap:anywhere}
+.p-head{display:flex; gap:12px; align-items:center}
+.p-head > div{min-width:0}
+.p-icon{flex:none; width:52px; height:52px; border-radius:50%; background:var(--pin); display:grid; place-items:center}
+.p-icon.t-shop{border-radius:10px} .p-icon.t-spa{border-radius:18px} .p-icon.t-hotel{border-radius:16px} .p-icon.t-club{border-radius:12px; transform:rotate(0)} .p-icon.t-food{border-radius:18px}
+.p-icon svg{width:32px; height:32px}
+.tag{display:inline-block; font-size:13px; line-height:1.5; padding:0 10px; border-radius:999px; background:color-mix(in srgb, var(--pin) 24%, var(--surface)); color:var(--ink)}
+.rows{display:grid; grid-template-columns:auto minmax(0,1fr); gap:8px 14px; margin:14px 0 0}
+.rows dt{color:var(--muted); font-size:13px}
+.rows dd{margin:0; overflow-wrap:anywhere}
+.near{display:flex; flex-wrap:wrap; gap:8px; margin-top:6px}
+.near .btn{min-height:36px; padding:2px 14px; font-size:14px}
+.go{display:inline-flex; align-items:center; gap:6px; margin-top:18px; min-height:44px; padding:8px 20px; border-radius:999px; background:var(--btn); color:var(--btn-fg); text-decoration:none}
+.go:hover{transform:translateY(-2px)}
+.go.alt{background:transparent; color:var(--ink); border:2px solid var(--ink); margin-left:8px}
+.review{margin-top:14px; padding:12px 14px; border-radius:14px; background:var(--card2, rgba(127,127,127,.12))}
+.review h3{margin:0 0 4px}
+.pinned-note{display:flex; align-items:center; justify-content:space-between; gap:8px; margin-top:16px; font-size:13px; color:var(--muted)}
+.pinned-note button{font:inherit; font-size:13px; color:var(--ink); background:none; border:2px solid var(--line); border-radius:999px; padding:0 12px; min-height:30px; cursor:pointer}
+.index{list-style:none; margin:0; padding:0; display:grid; gap:2px}
+.row{width:100%; display:flex; align-items:center; gap:10px; text-align:left; font:inherit; color:var(--ink); background:none; border:0; border-radius:14px; padding:4px 8px; min-height:38px; cursor:pointer}
+.row:hover{background:var(--bg)}
+.row span.nm{min-width:0; overflow-wrap:anywhere}
+.row small{margin-left:auto; flex:none; color:var(--muted); font-size:13px}
+.dot{flex:none; width:14px; height:14px; background:var(--pin); border-radius:50%}
+.t-hotel .dot, .t-club .dot{border-radius:4px}
+.hint{color:var(--muted); font-size:13px}
+.empty{color:var(--muted); font-size:14px}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation:none !important; transition:none !important}
+}
+
+/* ===== 手機：文字放大（只在手機版生效，放在最後以蓋過上面的設定） ===== */
+@media (max-width:999px){
+  body{font-size:17px}
+  header h1{font-size:20px}
+  .maphint{font-size:14px; padding:3px 12px}
+  .sheet-head strong{font-size:21px}
+  .cat label{font-size:17px} .cat .n{font-size:15px} .solo{font-size:15px}
+  .subs .cat label{font-size:16px} .subtitle{font-size:15px}
+  .field, .btn{font-size:17px; min-height:48px}
+  .count{font-size:16px}
+  .zhead{font-size:16px} .zlb{font-size:17px; min-height:44px} .zlb small, .toolbar .zlb small{font-size:14px}
+  #dock button{font-size:20px; min-height:56px; padding:0 22px}
+  body #panel h2{font-size:27px}
+  body #panel h3{font-size:17px}
+  body #panel p, body #panel .rows dd{font-size:18px}
+  .rows dt{font-size:16px}
+  .tag{font-size:15px} .ztag{font-size:15px}
+  .near .btn{font-size:17px; min-height:44px}
+  .row{font-size:17px} .row small{font-size:15px}
+  .hint, .empty, .pinned-note, .pinned-note button{font-size:15px}
+  .go{font-size:17px}
+  #map{--zf:1.3}
+  .region{font-size:calc(25px * var(--u, 1))} .region .en{display:none}
+  .tip{font-size:calc(23px * var(--u, 1))}
+  .zone-name{font-size:calc(34px * var(--u, 1))} .zone-name .en{font-size:calc(18px * var(--u, 1))}
+}
+</style>
+
+<main class="wrap">
+  <header>
+    <h1>峇里島地圖</h1>
+    <p class="sub">本島加藍夢島、佩妮達島。滾輪或雙指縮放、拖曳移動，圖示太近時會合併成數字，放大就會散開。位置依地區示意，不是精準座標。</p>
+  </header>
+
+  <section class="toolbar" id="toolbar" aria-label="篩選地點">
+    <div class="sheet-head"><strong>篩選・搜尋</strong><button class="p-close" type="button" id="tbClose" aria-label="關閉篩選">✕</button></div>
+    <fieldset class="cats" id="cats"><legend class="sr">地點類型（可複選）</legend></fieldset>
+    <fieldset class="cats subs" id="subs" hidden><legend class="sr">細分類型（可複選）</legend></fieldset>
+    <div class="row2">
+      <input class="field" id="q" type="search" placeholder="搜尋名稱、地區" aria-label="搜尋名稱或地區" autocomplete="off">
+      <select class="field" id="region" aria-label="地區"></select>
+      <button class="btn" type="button" id="allBtn">全選</button>
+      <button class="btn" type="button" id="noneBtn">全部取消</button>
+      <button class="btn tool" type="button" id="placeBtn" aria-pressed="false">取得座標</button>
+      <button class="btn" type="button" id="zoneBtn" aria-pressed="true">熱門區域 開</button>
+      <button class="btn tool" type="button" id="editBtn" aria-pressed="false">調整位置</button>
+      <span class="count" id="count" aria-live="polite"></span>
+    </div>
+    <button class="btn done" type="button" id="tbDone">看地圖</button>
+  </section>
+
+  <nav id="dock" aria-label="手機操作列"><button class="main" type="button" id="dkFilter">篩選・搜尋</button><button type="button" id="dkList">清單</button><button type="button" id="dkFit">全圖</button></nav>
+
+  <section id="mlist" aria-label="地點清單"></section>
+  <button id="toTop" type="button" aria-label="回到篩選">↑<br>篩選</button>
+
+  <div class="mapbox" id="mapbox">
+    <svg id="map" viewBox="0 80 1400 900" role="img" aria-label="峇里島、藍夢島與佩妮達島的插畫地圖"></svg>
+    <div class="zoom">
+      <button class="zbtn" type="button" id="zin" aria-label="放大">+</button>
+      <button class="zbtn" type="button" id="zout" aria-label="縮小">−</button>
+      <button class="zbtn fit" type="button" id="zfit" aria-label="重設檢視">全</button>
+    </div>
+    <div class="maphint" id="hint">滾輪縮放・拖曳移動</div>
+    <aside id="panel" aria-live="polite"></aside>
+    <div class="coordbar" id="editbar" hidden>
+      <span id="editMsg">拖曳圖示到正確的位置。</span>
+      <button class="mini" type="button" id="copyPos">複製位置</button>
+      <button class="mini" type="button" id="resetPos">全部還原</button>
+    </div>
+    <div class="coordbar" id="coordbar" hidden>
+      <span>點地圖任一處，取得放置物件的座標（畫布 1400 × 1000）</span>
+      <input id="coordval" type="text" readonly value="x: -, y: -" aria-label="座標">
+      <button class="mini" type="button" id="copyBtn">複製</button>
+    </div>
+  </div>
+</main>
+
+<script>
+/* ===== 地點資料：來自你的試算表。x、y 是圖示底部尖端在 1400 × 1000 畫布上的位置 ===== */
+const PLACES = [{"id": "p0", "type": "act", "cat": "活動", "sub": "", "region": "烏布", "regionEn": "Ubud", "name": "Desa Swing", "short": "Desa Swing", "desc": "除了鞦韆外，現場還提供鳥巢、巨型心形竹籃、懸空觀景台等多樣化的特色拍照裝置，非常適合喜歡拍照留念的旅客。", "rules": "", "ig": "https://www.instagram.com/balidesaswing/", "place": "Desa Swing Bongkasa", "url": "http://balidesaswing.com/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "swing", "loc": "ll", "lat": -8.501893370399495, "lon": 115.23588572209063, "zone": "mid", "x": 821, "y": 571, "map": "https://www.google.com/maps/search/?api=1&query=-8.501893370399495,115.23588572209063"}, {"id": "p1", "type": "act", "cat": "活動", "sub": "", "region": "烏布", "regionEn": "Ubud", "name": "Kuber BALI ATV", "short": "Kuber BALI ATV", "desc": "其最具代表性的亮點，是帶領遊客直接穿過充滿神祕感的天然岩壁隧道（洞穴），並行經壯麗的叢林隱藏瀑布與水流淺灘，是拍攝史詩級美照的熱門場景。", "rules": "", "ig": "https://www.instagram.com/kuberbali_adventureofficial/", "place": "Kuber BALI ADVENTURE", "url": "https://kuberbaliadventure.com/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "atv", "loc": "ll", "lat": -8.4509971915597, "lon": 115.2461817374357, "zone": "mid", "x": 812, "y": 528, "map": "https://www.google.com/maps/search/?api=1&query=-8.4509971915597,115.2461817374357"}, {"id": "p2", "type": "act", "cat": "活動", "sub": "", "region": "烏布", "regionEn": "Ubud", "name": "Yellow Garden Adventures & Experiences", "short": "Yellow Garden Adventures & …", "desc": "激流泛舟業者1。阿勇河激流泛舟：主打峇里島最具代表性的阿勇河泛舟體驗，沿途穿越壯麗的深谷、熱帶雨林與天然瀑布，讓旅客在湍急的水流中享受暢快淋漓的冒險樂趣。", "rules": "", "ig": "https://www.instagram.com/yellowgardenbaliofficial/", "place": "", "url": "https://maps.app.goo.gl/r5ruwwPNq2YdLaiB7", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "palm", "loc": "ll", "lat": -8.49314515414394, "lon": 115.23986526441813, "zone": "mid", "x": 824, "y": 563, "map": "https://www.google.com/maps/search/?api=1&query=-8.49314515414394,115.23986526441813"}, {"id": "p3", "type": "spa", "cat": "SPA", "sub": "", "region": "金巴蘭", "regionEn": "Jimbaran", "name": "Piramid Spa", "short": "Piramid Spa", "desc": "整個水療空間以巨型金字塔為設計概念，內部裝潢充滿神祕的埃及壁畫與雕像，營造出兼具奢華與私密感的度假氛圍。豐富的水療與按摩療程：提供專業的傳統峇里島按摩、精油按摩、去角質以及特色水療浴池，能有效舒緩旅途中的疲勞與緊繃。", "rules": "", "ig": "https://www.instagram.com/piramid_spa/", "place": "", "url": "https://piramidspabali.com/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "spa", "loc": "ll", "lat": -8.77948175360654, "lon": 115.18735721991975, "zone": "south", "x": 804, "y": 848, "map": "https://www.google.com/maps/search/?api=1&query=-8.77948175360654,115.18735721991975"}, {"id": "p4", "type": "act", "cat": "活動", "sub": "", "region": "金巴蘭", "regionEn": "Jimbaran", "name": "SAKA博物館", "short": "SAKA博物館", "desc": "SAKA博物館 位於峇里島金巴蘭（Jimbaran）的 AYANA Resort 園區內，是一座融合當代建築美學與深厚峇里島文化的現代化地標博物館。館名「SAKA」源自峇里島的 Saka 曆法，致力於透過藝術、科技與傳統文化的結合，展現峇里島獨特的宇宙觀與美學哲學。", "rules": "", "ig": "", "place": "SAKA Museum", "url": "http://www.sakamuseum.org/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "museum", "loc": "ll", "lat": -8.785723226340163, "lon": 115.1432739150769, "zone": "south", "x": 757, "y": 852, "map": "https://www.google.com/maps/search/?api=1&query=-8.785723226340163,115.1432739150769"}, {"id": "p5", "type": "act", "cat": "活動", "sub": "", "region": "烏魯瓦圖", "regionEn": "Uluwatu", "name": "Bambu Fitness Bali", "short": "Bambu Fitness Bali", "desc": "Bambu Fitness Bali 是峇里島烏魯瓦圖（Uluwatu）地區非常著名的全方位頂級網紅健身複合園區。它不只是一間普通的健身房，而是結合了「高階健身、熱帶美學、社交社群與健康飲食」的一站式健康聖地。\n因為擁有融合了峇里島竹編建築與墨西哥圖倫（Tulum）度假風的超美設計，這裡每天都聚集了大量來自世界各地的數位遊民、歐美帥哥美女、健身網紅和運動愛好者，是當地公認的「猛男美女聚集地」。", "rules": "這裡非常歡迎觀光客，單次入場（Drop-in 日票）大約落在 225,000 到 275,000 印尼盾（約台幣 400~500 元），可以自由使用器材或參加團課。去這裡運動不僅能維持身材，更是體驗峇里島獨特「健康生活風格（Wellness Lifestyle）」與結交各國新朋友的極佳社交場所。", "ig": "https://www.instagram.com/bambufitnessbali/", "place": "", "url": "http://www.bambufitnessbali.com/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "gym", "loc": "ll", "lat": -8.806214930509379, "lon": 115.1141772701045, "zone": "south", "x": 728, "y": 873, "map": "https://www.google.com/maps/search/?api=1&query=-8.806214930509379,115.1141772701045"}, {"id": "p6", "type": "club", "cat": "CLUB", "sub": "", "region": "烏魯瓦圖", "regionEn": "Uluwatu", "name": "Savaya Bali", "short": "Savaya Bali", "desc": "Savaya Bali（前身為極具名氣的 OMNIA Dayclub）是峇里島世界級的頂級奢華懸崖海灘俱樂部（Beach Club）與日間夜店。它位居《DJ Mag》亞洲第一、全球第五大俱樂部的至高殊榮。這裡座落在烏魯瓦圖（Uluwatu）高達 100 公尺的壯麗懸崖峭壁之上，擁有鳥瞰印度洋 180 度全景的極致視野，是全球電音愛好者、派對控、名流以及網紅到峇里島必朝聖的「蹦迪天花板」。", "rules": "• 嚴格的年齡與服裝限制： 僅限 21 歲以上成人進入（現場會嚴查實體護照/身分證）。服裝規定為「時尚休閒風格（Fashion-casual）」，禁止穿著印有啤酒品牌的背心、運動服或過度破爛的剪裁服飾。\n• 門票與消費： 平日一般入場票（General Admission）約在 15 萬至 25 萬印尼盾上下（約台幣 300~500 元）；若是熱門活動日或百大 DJ 場次，門票會飆高且迅速完售，建議提早在 Savaya 官網活動行事曆 預訂。\n• 沙發卡座低消： 想坐泳池旁的雙人躺椅或 VIP 卡座，有不低的最低消費（Minimum Spend）門檻，通常從 300 萬到上千萬印尼盾不等（約台幣 6,000 元至數萬元），金額可折抵當天的餐飲。", "ig": "https://www.instagram.com/savayabali/", "place": "", "url": "http://savaya.com/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "club", "loc": "ll", "lat": -8.842314202026582, "lon": 115.14049017924201, "zone": "south", "x": 755, "y": 903, "map": "https://www.google.com/maps/search/?api=1&query=-8.842314202026582,115.14049017924201"}, {"id": "p7", "type": "act", "cat": "活動", "sub": "", "region": "努沙杜瓦", "regionEn": "Nusa Dua", "name": "Riug Paragliding", "short": "Riug Paragliding", "desc": "飛行傘。位於峇里島南部的努沙杜瓦（Nusa Dua）海灘一帶，是當地極具人氣的專業飛行傘極限運動基地。這裡坐擁絕佳的海岸高地地形，能讓旅客在教練的帶領下乘風飛翔，俯瞰印度洋的壯麗無敵海景。", "rules": "", "ig": "https://www.instagram.com/riugparagliding/", "place": "(Paragliding Bali) Riug Paragliding", "url": "http://www.riugparagliding.com/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "glider", "loc": "ll", "lat": -8.834904957050098, "lon": 115.20867097776262, "zone": "south", "x": 825, "y": 893, "map": "https://www.google.com/maps/search/?api=1&query=-8.834904957050098,115.20867097776262"}, {"id": "p8", "type": "club", "cat": "CLUB", "sub": "", "region": "彰古", "regionEn": "Canggu", "name": "Café del Mar Bali", "short": "Café del Mar Bali", "desc": "位於峇里島長谷（Canggu）的貝拉瓦海灘（Berawa Beach）旁，是源自西班牙伊比薩島（Ibiza）的世界級奢華海灘俱樂部。這裡將地中海的優雅風情與峇里島的熱帶度假氛圍完美融合，是欣賞絕美日落與享受高端派對的指標性地標。", "rules": "", "ig": "https://www.instagram.com/cafedelmarbali/", "place": "", "url": "https://www.cafedelmarbali.co.id/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "club", "loc": "ll", "lat": -8.668062998639353, "lon": 115.14462903505226, "zone": "south", "x": 777, "y": 656, "map": "https://www.google.com/maps/search/?api=1&query=-8.668062998639353,115.14462903505226"}, {"id": "p9", "type": "club", "cat": "CLUB", "sub": "", "region": "彰古", "regionEn": "Canggu", "name": "FINNS Beach Club", "short": "FINNS Beach Club", "desc": "位於峇里島長谷（Canggu），是全球知名且規模宏大的世界級海灘俱樂部。這裡憑藉著絕佳的濱海位置、熱鬧的派對氛圍與頂級的休閒設施，成為造訪峇里島絕對不能錯過的熱門地標。", "rules": "", "ig": "https://www.instagram.com/finnsbeachclub/", "place": "", "url": "https://bookings.finnsbeachclub.com/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "club", "loc": "ll", "lat": -8.664836798861595, "lon": 115.13938322678676, "zone": "south", "x": 769, "y": 654, "map": "https://www.google.com/maps/search/?api=1&query=-8.664836798861595,115.13938322678676"}, {"id": "p10", "type": "club", "cat": "CLUB", "sub": "", "region": "彰古", "regionEn": "Canggu", "name": "The Lawn Canggu Beach Club", "short": "The Lawn Canggu Beach Club", "desc": "位於峇里島長谷（Canggu），是當地極具代表性、風格悠閒且帶有波希米亞風情的熱門海灘俱樂部。這裡以大片面向大海的翠綠草坪與放鬆的氛圍聞名，深受全球旅客與衝浪客喜愛。", "rules": "", "ig": "https://www.instagram.com/thelawncanggu/", "place": "", "url": "https://www.projectblack.co/thelawncanggu", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "club", "loc": "ll", "lat": -8.657632673659315, "lon": 115.12962678908963, "zone": "south", "x": 756, "y": 648, "map": "https://www.google.com/maps/search/?api=1&query=-8.657632673659315,115.12962678908963"}, {"id": "p11", "type": "club", "cat": "CLUB", "sub": "", "region": "彰古", "regionEn": "Canggu", "name": "La Brisa Bali | Beach Club", "short": "La Brisa Bali", "desc": "位於峇里島長谷（Canggu，是一間以獨特「海盜船與木屋」美學聞名的超人氣波希米亞風海灘俱樂部。整個園區大量回收舊漁船木材與漂流木打造而成，充滿濃厚的復古冒險氣息與自然原始的浪漫氛圍。", "rules": "", "ig": "https://www.instagram.com/labrisabali/", "place": "", "url": "https://labrisa-bali.com/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "club", "loc": "ll", "lat": -8.65359577155562, "lon": 115.12479234151107, "zone": "south", "x": 751, "y": 643, "map": "https://www.google.com/maps/search/?api=1&query=-8.65359577155562,115.12479234151107"}, {"id": "p12", "type": "club", "cat": "CLUB", "sub": "", "region": "塔巴南", "regionEn": "Tabanan", "name": "Luna Beach Club", "short": "Luna Beach Club", "desc": "位於峇里島長谷（Canggu），是近年迅速崛起、規模宏大且充滿未來感與奢華美學的頂級海灘俱樂部。這裡以極具視覺震撼的大型竹造建築與前衛設計聞名，是峇里島西海岸全新的指標性度假地標。", "rules": "", "ig": "https://www.instagram.com/lunabeachclubbali/", "place": "", "url": "https://lunabeachclubbali.com/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "club", "loc": "ll", "lat": -8.627864857072403, "lon": 115.09417403998451, "zone": "south", "x": 724, "y": 610, "map": "https://www.google.com/maps/search/?api=1&query=-8.627864857072403,115.09417403998451"}, {"id": "p13", "type": "act", "cat": "活動", "sub": "", "region": "吉安雅", "regionEn": "Gianyar", "name": "Surya Bintang Adventures - Rafting | ATV | Restaurant 泛舟業者", "short": "Surya Bintang Adventures", "desc": "泛舟業者+ATV位於峇里島烏布（Ubud）與帕揚根一帶，是一間結合「激流泛舟」與「ATV 四輪越野車」的綜合性戶外冒險體驗業者。這裡以一站式的豐富行程與高性價比聞名，是喜愛戶外刺激與探索熱帶自然的旅客熱門的選擇。", "rules": "", "ig": "https://www.instagram.com/suryabintang_adventures/", "place": "Surya Bintang Adventures - Rafting | ATV | Restaurant", "url": "https://suryabintangadventures.com/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "raft", "loc": "ll", "lat": -8.439742181410487, "lon": 115.24178997822496, "zone": "mid", "x": 806, "y": 517, "map": "https://www.google.com/maps/search/?api=1&query=-8.439742181410487,115.24178997822496"}, {"id": "p14", "type": "act", "cat": "活動", "sub": "", "region": "彰古", "regionEn": "Canggu", "name": "Nirvana Life Fitness and Wellness Club", "short": "Nirvana Life Fitness", "desc": "健身房。位於峇里島長谷（Canggu）的貝拉瓦海灘附近，是一間結合現代化健身設施與高端養生療程的頂級健康俱樂部。這裡不僅是揮灑汗水的訓練殿堂，更以全方位的身心放鬆與恢復體驗聞名，深受當地居民與海島度假客的喜愛。", "rules": "", "ig": "https://www.instagram.com/nirvanalifebali/", "place": "", "url": "https://nirvanalife.com/bali", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "gym", "loc": "ll", "lat": -8.639362802581173, "lon": 115.15451187282189, "zone": "south", "x": 785, "y": 630, "map": "https://www.google.com/maps/search/?api=1&query=-8.639362802581173,115.15451187282189"}, {"id": "p15", "type": "act", "cat": "活動", "sub": "", "region": "彰古", "regionEn": "Canggu", "name": "Obsidian Gym Bali", "short": "Obsidian Gym Bali", "desc": "健身房。位於峇里島長谷（Canggu）地區，是一間近年備受矚目、風格前衛且設備極其專業的高端健身房。這裡以其低調沉穩的工業風美學與頂級的重量訓練硬體設施聞名，是許多專業健身人士與熱愛訓練的旅客在峇里島的秘密基地。", "rules": "", "ig": "https://www.instagram.com/obsidian.bali/", "place": "OBSIDIAN GYM BALI", "url": "https://www.obsidian-bali.com/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "gym", "loc": "ll", "lat": -8.632470738254838, "lon": 115.1366980282442, "zone": "south", "x": 764, "y": 623, "map": "https://www.google.com/maps/search/?api=1&query=-8.632470738254838,115.1366980282442"}, {"id": "p16", "type": "spot", "cat": "景點", "sub": "", "region": "塔巴南", "regionEn": "Tabanan", "name": "海神廟(Tanah Lot)", "short": "海神廟(Tanah Lot)", "desc": "海神廟(Tanah Lot)是峇里島最著名的地標之一，位於一座海岸岩石上，因潮水的變化而呈現不同的景觀。在漲潮時，海神廟看起來像是漂浮在海面上的神秘島嶼，而退潮時則可以步行前往一探究竟。這裡不僅是宗教聖地，也因為特殊的地形和優美的夕陽，成為熱門的觀光景點。", "rules": "距離南部熱門觀光區（如庫塔 Kuta 或登帕薩 Denpasar）約 20 公里，車程視交通狀況約需 45 至 60 分鐘。", "ig": "", "place": "Tanah Lot", "url": "https://www.tanahlot.id/", "ticket": "", "usd": "$10.00", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "temple", "loc": "ll", "lat": -8.620957267268755, "lon": 115.08689434510823, "zone": "south", "x": 701, "y": 611, "map": "https://www.google.com/maps/search/?api=1&query=-8.620957267268755,115.08689434510823"}, {"id": "p17", "type": "spot", "cat": "景點", "sub": "", "region": "努沙杜瓦", "regionEn": "Nusa Dua", "name": "努沙杜瓦（Nusa Dua", "short": "努沙杜瓦（Nusa Dua", "desc": "位於峇里島東南部的半島這區，這邊有許多豪華度假村(Resort)，是適合家庭旅遊的高級度假區。這邊大部分的度假村都有自己的私人海灘，這邊的海灘是屬於柔軟的細沙，海浪也很柔和，可以直接在飯店裡玩水踏浪，推薦在這住幾晚體驗看看。", "rules": "很多海上活動行程都在這區，像是海上拖曳傘(Parasailing)、海上飛板(Flyboard)、玩水上摩托車等等。活動地點就在飯店旁邊的海域，有司機到飯店接送，價格也不貴。", "ig": "", "place": "Jimbaran Beach", "url": "", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "beach", "loc": "region", "zone": "south", "x": 858, "y": 871, "map": "https://www.google.com/maps/search/?api=1&query=Jimbaran%20Beach%20Bali"}, {"id": "p18", "type": "spot", "cat": "景點", "sub": "", "region": "金巴蘭", "regionEn": "Jimbaran", "name": "金巴蘭海灘(Jimbaran Beach)", "short": "金巴蘭海灘(Jimbaran Beach)", "desc": "曾被評為全球最美十大日落之一，是欣賞夕陽的絕佳地點。這裡也以海鮮餐廳聞名，遊客可以在海灘上的餐廳享用新鮮的海鮮燒烤，同時欣賞日落美景。來這邊一定要吃日落時段的晚餐，體驗在沙灘上吃燒烤海鮮的特別氛圍，享受原始的美食滋味。", "rules": "另外，晚餐中間可能會有樂隊自己跑來表演，在表演完後會要求小費。雖然感覺有點強迫消費，但出來旅遊開心就好，可以給1~2萬印尼盾意思一下。", "ig": "", "place": "Seminyak Square", "url": "", "ticket": "免費", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "beach", "loc": "ll", "lat": -8.776105599653441, "lon": 115.16645988844539, "zone": "south", "x": 781, "y": 840, "map": "https://www.google.com/maps/search/?api=1&query=-8.776105599653441,115.16645988844539"}, {"id": "p19", "type": "spot", "cat": "景點", "sub": "", "region": "水明漾", "regionEn": "Seminyak", "name": "水明漾廣場(Seminyak Square)", "short": "水明漾廣場(Seminyak Square)", "desc": "位於峇里島南部的水明漾地區，是一座購物中心。不過只有兩層樓高，裡面的品牌也都很普通。水明漾廣場主要是來逛這一區附近的商店街，有許多峇里島特色紀念品店、服飾店、手工製品等等。相較於逛峇里島的傳統夜市(重複性高且多仿冒名牌)，這裡的東西會更有質感，更值得購入當紀念品。這裡也很適合年輕人來玩耍，還有很多高級餐廳和酒吧、夜店、Spa按摩店，並且營業到深夜。很適合峇里島的晚上來這區逛逛，吃飯和按摩。", "rules": "", "ig": "", "place": "Seminyak Square", "url": "http://www.seminyaksquare.com/?utm_source=google&utm_medium=organic&utm_campaign=google_profile&utm_content=website_button", "ticket": "免費", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "star", "loc": "ll", "lat": -8.683342485897159, "lon": 115.15699495222057, "zone": "south", "x": 792, "y": 668, "map": "https://www.google.com/maps/search/?api=1&query=-8.683342485897159,115.15699495222057"}, {"id": "p20", "type": "spot", "cat": "景點", "sub": "", "region": "烏魯瓦圖", "regionEn": "Uluwatu", "name": "烏魯瓦圖神廟(Uluwatu Temple)", "short": "烏魯瓦圖神廟(Uluwatu Temple)", "desc": "位於峇里島最南端的烏魯瓦圖地區(Uluwatu)，坐落於海拔約70公尺的懸崖上，俯瞰壯麗的印度洋景色。該神廟建於10世紀，是峇里島最古老且神聖的寺廟之一，主要供奉海神。由於其獨特的地理位置，這裡成為觀賞夕陽的絕佳地點。每當夕陽西下，烏魯瓦圖神廟的圓形劇場會上演傳統的卡恰火舞（Kecak Fire Dance）表演，該表演主要重現印度教史詩《羅摩衍那》（Ramayana）中的一段故事，內容包括猴王與惡魔之間的戰鬥等情節。表演時間通常在傍晚6點開始，建議提前購買門票以確保座位。通往烏魯瓦圖神廟的道路很容易塞車，建議提早抵達，或上一個行程不要安排太遠。", "rules": "需要注意的是，神廟周圍有許多猴子，牠們可能會對遊客的眼鏡、帽子等物品感興趣，建議妥善保管個人物品。此外，進入神廟時，遊客需遵守服裝規定，穿著覆蓋膝蓋的服裝，若無合適服裝，入口處提供紗籠(圍裙)供遊客使用。", "ig": "", "place": "Uluwatu Temple", "url": "https://maps.app.goo.gl/WnF4Wkq49gxcz4v26", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "$230.00", "kkday": "", "review": "", "icon": "temple", "loc": "ll", "lat": -8.829033295874908, "lon": 115.08496825122384, "zone": "south", "x": 715, "y": 898, "map": "https://www.google.com/maps/search/?api=1&query=-8.829033295874908,115.08496825122384"}, {"id": "p21", "type": "spot", "cat": "景點", "sub": "", "region": "烏魯瓦圖", "regionEn": "Uluwatu", "name": "卡恰火舞表演", "short": "卡恰火舞表演", "desc": "以絕美日落為背景，卡恰火舞秀帶領觀眾進入目眩神迷的神話世界", "rules": "每日主要分為兩個場次：• 第一場：18:00 – 19:00• 第二場：19:00 – 20:00", "ig": "", "place": "Uluwatu Temple", "url": "https://maps.app.goo.gl/WnF4Wkq49gxcz4v26", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "$261.00", "kkday": "$1,627.00", "review": "", "icon": "temple", "loc": "ll", "lat": -8.829033295874908, "lon": 115.08496825122384, "zone": "south", "x": 715, "y": 898, "map": "https://www.google.com/maps/search/?api=1&query=-8.829033295874908,115.08496825122384"}, {"id": "p22", "type": "spot", "cat": "景點", "sub": "", "region": "庫塔", "regionEn": "Kuta", "name": "Waterbom水樂園", "short": "Waterbom水樂園", "desc": "位於庫塔（Kuta）市中心，是亞洲頂級的水上樂園之一，佔地約3.8公頃。園區內擁有多樣化的滑水道和水上設施，適合各年齡層的遊客。其中，The Climax 是亞洲最陡峭的滑水道之一，可以挑戰一下自己的勇氣。當然也有其他輕鬆的玩水設施，像是漂漂河之類的，和許多泳池酒吧。在赤道附近的峇里島天氣炎熱，非常適合來這邊玩水。", "rules": "園區內設有多家餐廳和咖啡廳，提供各式美食，滿足不同口味的需求。此外，Waterbom水樂園採用無現金支付系統，遊客會在入園時取得手環，儲值後在園區內消費。", "ig": "", "place": "Waterbom Bali", "url": "https://waterbom-bali.com/", "ticket": "", "usd": "", "idr": "Rp550,000", "twd": "", "klook": "$1,144.00", "kkday": "$1,074.00", "review": "", "icon": "star", "loc": "ll", "lat": -8.728337594631217, "lon": 115.1692512490731, "zone": "south", "x": 803, "y": 741, "map": "https://www.google.com/maps/search/?api=1&query=-8.728337594631217,115.1692512490731"}, {"id": "p23", "type": "spot", "cat": "景點", "sub": "", "region": "庫塔", "regionEn": "Kuta", "name": "庫塔海灘 (Kuta Beach)", "short": "庫塔海灘 (Kuta Beach)", "desc": "峇里島是著名的衝浪聖地，有各種不同的浪型可以玩，大中小都有。其中庫塔海灘 (Kuta Beach)最適合新手，也是峇里島著名的海灘之一。這裡擁有綿延的金色沙灘和平穩的海浪，特別適合衝浪初學者。此外，庫塔海灘的日落美景也是旅客不容錯過的亮點。庫塔海灘除了衝之外，也有熱鬧的夜生活，這區聚集了許多酒吧、海灘俱樂部(beach club)和夜店，夜生活豐富多彩，適合喜歡熱鬧的旅客。", "rules": "", "ig": "", "place": "Kuta Beach", "url": "http://kutabeachbalii.com/", "ticket": "免費", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "beach", "loc": "ll", "lat": -8.717915978015428, "lon": 115.16861579355093, "zone": "south", "x": 801, "y": 737, "map": "https://www.google.com/maps/search/?api=1&query=-8.717915978015428,115.16861579355093"}, {"id": "p24", "type": "spot", "cat": "景點", "sub": "", "region": "吉安雅", "regionEn": "Gianyar", "name": "聖泉寺(Pura Tirta Empul)", "short": "聖泉寺(Pura Tirta Empul)", "desc": "建於西元926年，是峇里島五大神聖寺廟之一，也是峇里島最神聖的水源之一，敬拜的是印度教的水神毘濕奴。裡面的水池是進行聖泉浴的地方，當地人相信到此處用聖水沖洗可以淨化靈魂。因為聖泉寺內外院都對外開放，因此也成為峇里島熱門的觀光景點之一，經常在明信片上面看到的水池浴照就是在這邊。", "rules": "不可穿著短褲，寺廟前有免費提供紗籠(圍裙)，所以衣著不會有影響。長髮者需要把頭髮綁起來。女性經期來時不可進入。如果要參加淨化儀式，會需要額外費用，只能現金支付，要記得帶夠。", "ig": "", "place": "Pura Tirta Empul", "url": "https://gianyartourismticket.com/en/detail/titra-empul%20", "ticket": "", "usd": "", "idr": "Rp50,000", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "temple", "loc": "ll", "lat": -8.415406618780272, "lon": 115.31542216359796, "zone": "mid", "x": 887, "y": 468, "map": "https://www.google.com/maps/search/?api=1&query=-8.415406618780272,115.31542216359796"}, {"id": "p25", "type": "spot", "cat": "景點", "sub": "", "region": "烏布", "regionEn": "Ubud", "name": "烏布皇宮(Ubud Palace)", "short": "烏布皇宮(Ubud Palace)", "desc": "位於峇里島烏布市中心，是體驗峇里島傳統文化的必訪景點。這座宮殿裡有許多外觀精美的石刻藝術，展現了峇里島傳統建築的美麗。雖然宮殿規模不大，但其歷史價值和文化意義深遠。遊客可以參觀庭院和部分開放的建築區域，傍晚時分還能欣賞到傳統的峇里島舞蹈表演。由於位置方便，建議搭配附近的烏布市場一同遊覽。進入烏布皇宮不需要門票，裡面範圍不大，可以參觀的區域走馬看花10分鐘就結束。烏布皇宮目前還是皇室成員的住所，所以有些區域會掛在禁止進入的牌子，避免觀光客誤入住宅。", "rules": "烏布皇宮每天晚上會有傳統舞蹈表演，每天的主題稍有不同，主要是以雷貢舞(Legong Dance)為主。因為是戶外表演，記得帶防蚊液。", "ig": "", "place": "Ubud Palace", "url": "https://maps.app.goo.gl/LjxceK6uThwDBHrt8", "ticket": "免費", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "star", "loc": "ll", "lat": -8.50641730775272, "lon": 115.26253475221846, "zone": "mid", "x": 849, "y": 574, "map": "https://www.google.com/maps/search/?api=1&query=-8.50641730775272,115.26253475221846"}, {"id": "p26", "type": "spot", "cat": "景點", "sub": "", "region": "烏布", "regionEn": "Ubud", "name": "烏布水皇宮", "short": "烏布水皇宮", "desc": "烏布水皇宮(Ubud Water Palace)的正名是莎拉斯瓦蒂水神廟(Pura Taman Saraswati)。「Pura」 在峇里語中意為 「寺廟」，專指印度教寺廟。「Taman」 意為 「花園」或「水庭院」，指的是寺廟內的蓮花池景觀。「Saraswati」 指的是 「莎拉斯瓦蒂女神」，是印度教中智慧、學識與藝術的守護神。烏布水皇宮建於1952年，而且其實不是宮殿，是一座峇里島印度廟。因為寺廟的外觀且是由烏布王室建造，有宮殿式建築與水池，因此才被稱為「水皇宮」。裡面能參觀的範圍不大，有一個很大的蓮花池，還算好拍照，有路過或是到烏布皇宮的話，可以順路來參觀。", "rules": "白天可以免費進入參觀，來這邊拍照，欣賞皇宮的精緻石雕。裡面的空間不大，10分鐘就可以走完，加上拍照，大概30分鐘吧。如果想要來坐著放空，旁邊有一間咖啡廳Cafe Lotus(map)正對著蓮花池，可以邊吃東西邊欣賞皇宮。在晚上，水皇宮會舉行傳統的峇里舞蹈表演，如Legong Dance等，每日的表演舞蹈不同，參考官網，讓遊客體驗當地的文化藝術。建議提前詢問表演時間並預訂座位。", "ig": "", "place": "Ubud Water Palace", "url": "http://www.ubudwaterpalace.com/", "ticket": "", "usd": "", "idr": "Rp65,000", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "star", "loc": "ll", "lat": -8.50563526410406, "lon": 115.26135073846118, "zone": "mid", "x": 848, "y": 574, "map": "https://www.google.com/maps/search/?api=1&query=-8.50563526410406,115.26135073846118"}, {"id": "p27", "type": "shop", "cat": "商場", "sub": "", "region": "烏布", "regionEn": "Ubud", "name": "烏布市場", "short": "烏布市場", "desc": "烏布市場(Ubud Market)又稱為烏布藝術市場，因為烏布是峇里島的藝術文化起源地。這裡的市場有很多工藝品，逛了一圈下來後，心得是確實很好買，物品有特色，很推薦來買紀念品。就算不買東西，只參觀也很不錯。本文帶大家欣賞一下烏布市場裡面有賣哪些東西。如果有要來烏布市場買東西的話，記得一定要殺價，體驗一下峇里島的購物文化。", "rules": "可以從價格的3~5折開始喊起，再慢慢往上加。一次買多一點，比較有折扣空間。對想要的商品要展現的不是很想買，也會比較好殺價。", "ig": "", "place": "Ubud Art Market", "url": "https://maps.app.goo.gl/2j1kVkhddrnx1xGJ6", "ticket": "免費", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "bag", "loc": "ll", "lat": -8.507192153814813, "lon": 115.26280064201666, "zone": "mid", "x": 850, "y": 575, "map": "https://www.google.com/maps/search/?api=1&query=-8.507192153814813,115.26280064201666"}, {"id": "p28", "type": "spot", "cat": "景點", "sub": "", "region": "烏布", "regionEn": "Ubud", "name": "德哥拉朗梯田(Tegallalang Rice Terrace)", "short": "德哥拉朗梯田(Tegallalang Rice Ter…", "desc": "位於峇里島中部的烏布北方，以其層層疊疊的稻田景觀聞名，是自由行旅客的熱門打卡景點。該地區的蘇巴克（Subak）灌溉系統，展現了人與自然和諧共存的精神，並於2012年被列入世界文化遺產。德哥拉朗梯田是來走走參觀梯田步道，沒有一定的入口。建議穿著舒適的鞋子，梯田步道可能陡峭且泥濘。最佳造訪時間為清晨或傍晚，避免正午的高溫。", "rules": "因為在梯田步道間穿梭，會經過不同地主的土地，所以可能會被收取好幾次過路費，建議攜帶小額現金以備不時之需。也可以直接報名相關行程，比較乾脆，這裡已經很商業化，周圍有許多咖啡廳和付費活動，像是高空鞦韆、空中自行車等等。", "ig": "", "place": "", "url": "https://maps.app.goo.gl/JUcA3E1ibBiasPRu5", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "terrace", "loc": "region", "zone": "mid", "x": 859, "y": 546, "map": "https://www.google.com/maps/search/?api=1&query=%E5%BE%B7%E5%93%A5%E6%8B%89%E6%9C%97%E6%A2%AF%E7%94%B0%28Tegallalang%20Rice%20Terrace%29%20Bali"}, {"id": "p29", "type": "spot", "cat": "景點", "sub": "", "region": "吉安雅", "regionEn": "Gianyar", "name": "聖猴森林公園（Sacred Monkey Forest Sanctuary）", "short": "聖猴森林公園（Sacred Monkey Forest…", "desc": "是一個結合自然與文化的旅遊景點，位於烏布地區，這裡有茂密的森林和超過700隻的長尾獼猴自由活動。除了觀賞猴子的生態，園內還有三座古老的印度教寺廟，充滿濃厚的文化氛圍，是了解峇里島文化與宗教信仰的好地方。", "rules": "建議遊客攜帶一些小零食或水果作為與猴子互動的道具，但要注意保持距離，避免不必要的騷擾。", "ig": "", "place": "", "url": "https://maps.app.goo.gl/3G42b8uRCNMdRdyN9", "ticket": "", "usd": "", "idr": "Rp130,000", "twd": "", "klook": "$182.00", "kkday": "", "review": "", "icon": "star", "loc": "ll", "lat": -8.519107430122196, "lon": 115.26075864214887, "zone": "mid", "x": 849, "y": 584, "map": "https://www.google.com/maps/search/?api=1&query=-8.519107430122196,115.26075864214887"}, {"id": "p30", "type": "spot", "cat": "景點", "sub": "", "region": "邦利", "regionEn": "Bangli", "name": "彭里普蘭村(Penglipuran Village)", "short": "彭里普蘭村(Penglipuran Village)", "desc": "位於峇里島中北部的邦利（Bangli）區，是一座保存完好的傳統村落，以其獨特的文化和建築風格而聞名。該村莊被譽為世界上最乾淨的村莊之一，村民們自小被教育不能隨意亂丟垃圾，並積極從事資源回收及環保工作，讓這個古老村落顯得乾淨又整齊。村莊的主要特色包括：傳統建築：彭里普蘭村的房屋保留了傳統的峇里島建築風格，排列整齊，展現出濃厚的文化氛圍。文化遺產：村民們至今仍遵循祖先傳承的文化秩序，保持著傳統的生活方式和習俗。自然環境：村莊周圍環境優美，空氣清新，提供遊客一個放鬆身心的好去處。", "rules": "不能隨意亂丟垃圾", "ig": "", "place": "Penglipuran Village", "url": "https://visitpenglipuran.com/", "ticket": "", "usd": "", "idr": "Rp50,000", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "temple", "loc": "ll", "lat": -8.422227950284485, "lon": 115.3598496556425, "zone": "mid", "x": 930, "y": 479, "map": "https://www.google.com/maps/search/?api=1&query=-8.422227950284485,115.3598496556425"}, {"id": "p31", "type": "spot", "cat": "景點", "sub": "", "region": "吉安雅", "regionEn": "Gianyar", "name": "Safari野生動物園(The Amazing Taman Safari Bali)", "short": "Safari野生動物園(The Amazing Tam…", "desc": "佔地約 40 公頃，園區內飼養了來自印尼、印度和非洲大草原的多種野生動物。遊客可搭乘遊園車近距離觀察大象、獅子、老虎等 60 多種動物，體驗難忘的遊獵之旅。此外，園區內還提供精彩的動物表演、娛樂活動，以及主題餐廳和水族館等設施，適合親子同遊。", "rules": "日間動物園每日 09:00 – 17:00、夜間動物園 18:00 – 21:00", "ig": "", "place": "Taman Safari", "url": "https://tamansafari.com/taman-safari-bali/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "$1,362.00", "kkday": "", "review": "", "icon": "star", "loc": "ll", "lat": -8.581937673793806, "lon": 115.34720365195726, "zone": "mid", "x": 941, "y": 621, "map": "https://www.google.com/maps/search/?api=1&query=-8.581937673793806,115.34720365195726"}, {"id": "p32", "type": "spot", "cat": "景點", "sub": "", "region": "吉安雅", "regionEn": "Gianyar", "name": "Marine Safari Bali", "short": "Marine Safari Bali", "desc": "是印尼知名 Taman Safari 集團所打造的全新大型海洋生態與野生動物園區，位於峇里島吉安雅（Gianyar）地區，緊鄰原本就非常熱門的 Bali Safari & Marine Park 園區旁。", "rules": "", "ig": "", "place": "", "url": "https://tamansafari.com/marine-safari-bali/", "ticket": "https://www.instagram.com/marinesafaribali/", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "$1,179.00", "review": "", "icon": "star", "loc": "ll", "lat": -8.581481498983514, "lon": 115.34702126176431, "zone": "mid", "x": 941, "y": 620, "map": "https://www.google.com/maps/search/?api=1&query=-8.581481498983514,115.34702126176431"}, {"id": "p33", "type": "spot", "cat": "景點", "sub": "", "region": "烏布", "regionEn": "Ubud", "name": "德格拉朗瀑布(Tegenungan Waterfall)", "short": "德格拉朗瀑布(Tegenungan Waterfall)", "desc": "位於峇里島烏布附近的 Kemenuh 村，是該地區少數不在高地或山區的瀑布之一，因為非常容易抵達，所以成為熱門的看瀑布景點。瀑布水量充沛，周圍環境綠意盎然，許多人都來這邊玩水、打卡拍照。", "rules": "德格努冷瀑布因為很熱門，環境比較商業化，可能會支付比較多的小費或過路費，和一般期望的秘境瀑布不太一樣。網路常看到的空中盪鞦韆照片和鳥巢照片就在這邊，只是都需要額外付費。", "ig": "", "place": "Tegenungan Waterfall", "url": "https://maps.app.goo.gl/fTGNCcu5xJc5rTSg7", "ticket": "免費", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "fall", "loc": "ll", "lat": -8.575118095363917, "lon": 115.28898672209063, "zone": "mid", "x": 886, "y": 598, "map": "https://www.google.com/maps/search/?api=1&query=-8.575118095363917,115.28898672209063"}, {"id": "p34", "type": "spot", "cat": "景點", "sub": "", "region": "佩妮達島", "regionEn": "Penida", "name": "珀尼達島(Nusa Penida)", "short": "珀尼達島(Nusa Penida)", "desc": "面積約200平方公里，大概是一個台北市大小。這邊的海水、海灘是更清澈乾淨，並有壯麗的自然景觀，是許多自由行旅客會來玩耍的地方。這邊建議跟團包車跑景點，會比較安全且方便，因為島上的道路崎嶇，天氣也很炎熱。在島上的跟團會是A進B出的搭車＋搭船去浮潛＋換另一台車接手載人＋另一個碼頭回本島。珀尼達島的熱門行程是跑島嶼的西側，東側也有自己的行程景點，但就會拉車比較遠。西側主要景點有：", "rules": "要繳交上島稅", "ig": "", "place": "Penida Island", "url": "https://maps.app.goo.gl/FJnCFyVm4qdof6sH8", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "palm", "loc": "ll", "lat": -8.68940949044041, "lon": 115.48133557455377, "zone": "isle", "x": 1032, "y": 793, "map": "https://www.google.com/maps/search/?api=1&query=-8.68940949044041,115.48133557455377"}, {"id": "p35", "type": "spot", "cat": "景點", "sub": "", "region": "佩妮達島", "regionEn": "Penida", "name": "恐龍海灘(Kelingking Beach)", "short": "恐龍海灘(Kelingking Beach)", "desc": "因懸崖形狀酷似暴龍頭而聞名，從高處俯瞰，景色壯觀。可沿著陡峭的步道下至沙灘，但需注意安全。", "rules": "要繳交景點稅", "ig": "", "place": "Kelinking beach", "url": "https://maps.app.goo.gl/6Zsy5LhDYpvyyX357", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "beach", "loc": "ll", "lat": -8.750345413510967, "lon": 115.47423424963246, "zone": "isle", "x": 1023, "y": 848, "map": "https://www.google.com/maps/search/?api=1&query=-8.750345413510967,115.47423424963246"}, {"id": "p36", "type": "spot", "cat": "景點", "sub": "", "region": "佩妮達島", "regionEn": "Penida", "name": "天使浴池(Angel’s Billabong)", "short": "天使浴池(Angel’s Billabong)", "desc": "天然形成的無邊際泳池，清澈見底的水面連接著湛藍的大海，是拍照的絕佳地點。在這邊浮潛的話，有機會可以看到鬼蝠魟(Manta)，也就是俗稱的魔鬼魚。", "rules": "要繳交景點稅", "ig": "", "place": "Angel's Billabong", "url": "https://maps.app.goo.gl/6c2TWK43Ak2Y4xtx5", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "star", "loc": "ll", "lat": -8.733335931175215, "lon": 115.44898952883487, "zone": "isle", "x": 1001, "y": 829, "map": "https://www.google.com/maps/search/?api=1&query=-8.733335931175215,115.44898952883487"}, {"id": "p37", "type": "spot", "cat": "景點", "sub": "", "region": "佩妮達島", "regionEn": "Penida", "name": "破碎海灘(Broken Beach)", "short": "破碎海灘(Broken Beach)", "desc": "一個天然拱門的海蝕洞，海水通過拱門湧入，形成壯觀的景象。", "rules": "要繳交景點稅", "ig": "", "place": "Broken Beach", "url": "https://maps.app.goo.gl/Sto2rPGcvaujrCuk9", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "beach", "loc": "ll", "lat": -8.732523386221478, "lon": 115.4509284595139, "zone": "isle", "x": 1003, "y": 829, "map": "https://www.google.com/maps/search/?api=1&query=-8.732523386221478,115.4509284595139"}, {"id": "p38", "type": "spot", "cat": "景點", "sub": "", "region": "佩妮達島", "regionEn": "Penida", "name": "水晶灣(Crystal Bay)", "short": "水晶灣(Crystal Bay)", "desc": "水晶灣之所以得名，是因為這裡的海水清澈透明，能見度極高，非常適合浮潛和潛水。這裡有機會遇到稀有的翻車魚（Mola Mola，特別在7月至10月間出現）。", "rules": "要繳交景點稅", "ig": "", "place": "Crystal Bay Nusa Penida", "url": "https://maps.app.goo.gl/eU5jVWUQpdvBy81R7", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "beach", "loc": "ll", "lat": -8.714996723101603, "lon": 115.45901358734686, "zone": "isle", "x": 1011, "y": 817, "map": "https://www.google.com/maps/search/?api=1&query=-8.714996723101603,115.45901358734686"}, {"id": "p39", "type": "spot", "cat": "景點", "sub": "", "region": "佩妮達島", "regionEn": "Penida", "name": "加瑪特灣(Gamat Bay)", "short": "加瑪特灣(Gamat Bay)", "desc": "有珊瑚礁和豐富的海洋生物，是浮潛與潛水的天堂。", "rules": "要繳交景點稅", "ig": "", "place": "Gamat Bay", "url": "https://maps.app.goo.gl/4a8qYMetRw4Y98S49", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "beach", "loc": "ll", "lat": -8.700292491801362, "lon": 115.46932934528351, "zone": "isle", "x": 1022, "y": 805, "map": "https://www.google.com/maps/search/?api=1&query=-8.700292491801362,115.46932934528351"}, {"id": "p40", "type": "spot", "cat": "景點", "sub": "", "region": "藍夢島", "regionEn": "Nusa Lembongan", "name": "藍夢島(Nusa Lembongan)", "short": "藍夢島(Nusa Lembongan)", "desc": "面積約8平方公里，以清澈見底的海水和純樸的民風著稱，被稱為「玻璃海」。島上有豐富的水上活動，包括浮潛、海底漫步、SUP探索紅樹林等。這裡的海水也是相當乾淨。", "rules": "", "ig": "", "place": "Nusa Lembongan", "url": "https://maps.app.goo.gl/2dD4smY4HTGDFWyMA", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "palm", "loc": "ll", "lat": -8.67617878177624, "lon": 115.44636928080155, "zone": "isle", "x": 993, "y": 770, "map": "https://www.google.com/maps/search/?api=1&query=-8.67617878177624,115.44636928080155"}, {"id": "p41", "type": "spot", "cat": "景點", "sub": "", "region": "藍夢島", "regionEn": "Nusa Lembongan", "name": "惡魔的眼淚（Devil’s Tears）", "short": "惡魔的眼淚（Devil’s Tears）", "desc": "島嶼西南角的懸崖區，海浪拍打岩石激起的水花在陽光照射下宛如眼淚，是熱門拍照景點。", "rules": "", "ig": "", "place": "Devil's Tears", "url": "https://maps.app.goo.gl/PBhTXFTDYLdn1Fyk9", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "star", "loc": "ll", "lat": -8.69040061229989, "lon": 115.43038495951392, "zone": "isle", "x": 981, "y": 787, "map": "https://www.google.com/maps/search/?api=1&query=-8.69040061229989,115.43038495951392"}, {"id": "p42", "type": "spot", "cat": "景點", "sub": "", "region": "藍夢島", "regionEn": "Nusa Lembongan", "name": "夢幻沙灘（Dream Beach）", "short": "夢幻沙灘（Dream Beach）", "desc": "一處月牙形的白沙灘，海水湛藍，非常適合放鬆和日光浴。", "rules": "", "ig": "", "place": "Dream Beach Cliff", "url": "https://maps.app.goo.gl/MvZk8za1PtGgQBLWA", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "beach", "loc": "ll", "lat": -8.69063727214834, "lon": 115.43230035473836, "zone": "isle", "x": 983, "y": 787, "map": "https://www.google.com/maps/search/?api=1&query=-8.69063727214834,115.43230035473836"}, {"id": "p43", "type": "spot", "cat": "景點", "sub": "", "region": "藍夢島", "regionEn": "Nusa Lembongan", "name": "紅樹林（Mangrove Forest）", "short": "紅樹林（Mangrove Forest）", "desc": "位於島東北角，遊客可以搭船探索紅樹林的幽靜景色。", "rules": "", "ig": "", "place": "Mangrove Point", "url": "https://maps.app.goo.gl/UQDwaj4niH1QyDrbA", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "palm", "loc": "ll", "lat": -8.664237627504324, "lon": 115.46646811235561, "zone": "isle", "x": 1013, "y": 766, "map": "https://www.google.com/maps/search/?api=1&query=-8.664237627504324,115.46646811235561"}, {"id": "p44", "type": "spot", "cat": "景點", "sub": "", "region": "藍夢島", "regionEn": "Nusa Lembongan", "name": "黃色鐵橋（Yellow Bridge）", "short": "黃色鐵橋（Yellow Bridge）", "desc": "這座橋連接藍夢島與金銀島，是著名的打卡地標。", "rules": "", "ig": "", "place": "yellow bridge", "url": "https://maps.app.goo.gl/DqpdJt5NDeqZZrrd8", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "star", "loc": "ll", "lat": -8.693427199864907, "lon": 115.4510892289202, "zone": "isle", "x": 1005, "y": 800, "map": "https://www.google.com/maps/search/?api=1&query=-8.693427199864907,115.4510892289202"}, {"id": "p45", "type": "spot", "cat": "景點", "sub": "", "region": "金銀島", "regionEn": "Nusa Ceningan", "name": "金銀島(Nusa Ceningan)", "short": "金銀島(Nusa Ceningan)", "desc": "位於峇里島東南方，與藍夢島相鄰，透過著名的黃色鐵橋（Yellow Bridge）相連。這座島以純樸的自然風光和悠閒的氛圍吸引著遊客。", "rules": "", "ig": "", "place": "Ceningan island", "url": "https://maps.app.goo.gl/uipvQGdKTwoDWLnK6", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "palm", "loc": "ll", "lat": -8.69617059441122, "lon": 115.45145788067903, "zone": "isle", "x": 1005, "y": 802, "map": "https://www.google.com/maps/search/?api=1&query=-8.69617059441122,115.45145788067903"}, {"id": "p46", "type": "spot", "cat": "景點", "sub": "", "region": "金銀島", "regionEn": "Nusa Ceningan", "name": "藍色潟湖（Blue Lagoon）", "short": "藍色潟湖（Blue Lagoon）", "desc": "以湛藍海水聞名的美麗海灣，適合拍照和欣賞自然景觀。", "rules": "", "ig": "", "place": "Blue Lagoon View", "url": "https://maps.app.goo.gl/Ko1FxAZcWy6qSyg97", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "beach", "loc": "ll", "lat": -8.704120274445406, "lon": 115.4378663461148, "zone": "isle", "x": 1000, "y": 803, "map": "https://www.google.com/maps/search/?api=1&query=-8.704120274445406,115.4378663461148"}, {"id": "p47", "type": "spot", "cat": "景點", "sub": "", "region": "昆布", "regionEn": "Kubu", "name": "阿貢火山（Gunung Agung）", "short": "阿貢火山（Gunung Agung）", "desc": "是峇里島的最高峰，海拔3,031公尺，被當地人視為聖山。", "rules": "阿貢火山是可以攀爬的，當地人也會來朝聖。不過攀登前應留意當地火山活動資訊，確保安全。登山來回時間需要12-16小時，需拔升約2,000公尺，全程幾乎為緩上坡，地形多為火山細砂石，上坡時容易滑動，下山時更需小心。通常是在半夜12點啟登，在山頂看日出壯麗景色，然後再下山。由於路線難度較高，建議有當地嚮導帶路比較安全。", "ig": "", "place": "Mount Agung", "url": "https://maps.app.goo.gl/UhYVcpNgyaReH83v9", "ticket": "免費", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "volcano", "loc": "ll", "lat": -8.339929502308145, "lon": 115.50738273149355, "zone": "long", "x": 1134, "y": 374, "map": "https://www.google.com/maps/search/?api=1&query=-8.339929502308145,115.50738273149355"}, {"id": "p48", "type": "spot", "cat": "景點", "sub": "", "region": "金塔瑪尼", "regionEn": "Kintamani", "name": "巴杜爾火山(Gunung Batur)", "short": "巴杜爾火山(Gunung Batur)", "desc": "拔1,717公尺，是一座活火山，最近的噴發時間是在1999年。火山口內有一座高700公尺的複式火山，並擁有壯麗的巴杜爾湖景觀。巴杜爾火山也可以攀爬，路程比阿貢火山容易許多，只要2小時就能登頂。通常在凌晨4點開始，在山頂看日出後下山。若不想攀登，可前往金塔馬尼的觀景餐廳，一邊享用餐點，一邊欣賞火山與湖泊的壯麗景色。", "rules": "", "ig": "", "place": "Mt Batur", "url": "https://maps.app.goo.gl/g67daa841Tjox2Nn6", "ticket": "免費", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "volcano", "loc": "ll", "lat": -8.238486265679725, "lon": 115.37758023067902, "zone": "far", "x": 1026, "y": 340, "map": "https://www.google.com/maps/search/?api=1&query=-8.238486265679725,115.37758023067902"}, {"id": "p49", "type": "spot", "cat": "景點", "sub": "", "region": "東部地區", "regionEn": "East Bali", "name": "蒂爾塔岡加水宮(Tirta Gangga)", "short": "蒂爾塔岡加水宮(Tirta Gangga)", "desc": "是一座前皇家水上花園，建於1948年。園區佔地約1.2公頃，由多層次的水池、噴泉、雕像和花園組成，環境優雅寧靜，很適合來這邊拍照走走。水宮裡面有自己的餐廳和飯店，也可以住在裡面，來一個深度旅行。十一層噴泉：園區中央矗立著優雅的十一層Nawa Sanga噴泉，是蒂爾塔岡加的標誌性建築。水池與雕像：池塘內設有步道，遊客可在水上石階上行走，欣賞池中大型鯉魚和周圍的傳統雕像。游泳池：園區內有三個游泳池，供遊客戲水放鬆，水源來自天然泉水，清涼宜人。可以攜帶泳衣來此游泳玩水。", "rules": "", "ig": "", "place": "Tirta Gangga", "url": "https://tirtaganggabali.com/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "star", "loc": "ll", "lat": -8.402116158222373, "lon": 115.58826550896032, "zone": "long", "x": 1236, "y": 417, "map": "https://www.google.com/maps/search/?api=1&query=-8.402116158222373,115.58826550896032"}, {"id": "p50", "type": "spot", "cat": "景點", "sub": "", "region": "塔巴南", "regionEn": "Tabanan", "name": "布拉坦水神廟(Pura Ulun Danu Bratan)", "short": "布拉坦水神廟(Pura Ulun Danu Brata…", "desc": "位於峇里島的布拉坦湖畔，是一座供奉水、湖泊和河流女神德維·達努（Dewi Danu）的印度教寺廟。建於1633年，水神廟因其浮在湖面的夢幻景觀成為熱門的打卡景點。這裡不僅是靈性信仰的中心，還是峇里島農業灌溉的重要象徵。此外，水神廟的形象還出現在印尼的五萬盾紙幣上，是峇里島文化的標誌之一。", "rules": "布拉坦水神廟的位置在峇里島偏北方，再加上路況不好，裡面能逛的不多，如果有到烏布或北部火山，再來這邊順遊就好。建議早晨或傍晚前往，可以避開人潮並欣賞湖畔的迷人日出或夕陽。", "ig": "", "place": "Ulun Danu Beratan Temple", "url": "https://maps.app.goo.gl/7sCoC7PTj1mV9K3L9", "ticket": "", "usd": "", "idr": "Rp100,000", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "temple", "loc": "ll", "lat": -8.257912663376288, "lon": 115.17201040423512, "zone": "far", "x": 810, "y": 338, "map": "https://www.google.com/maps/search/?api=1&query=-8.257912663376288,115.17201040423512"}, {"id": "p51", "type": "spot", "cat": "景點", "sub": "", "region": "卡朗阿森", "regionEn": "Karangasem", "name": "百沙基母廟（Pura Besakih）", "short": "百沙基母廟（Pura Besakih）", "desc": "位於峇里島東部的阿貢火山南坡，被視為峇里島最神聖的印度教寺廟。該廟由22座寺廟組成，沿山而建，主廟的「善惡門」是著名的拍照景點。百沙基母廟的歷史可追溯至14世紀，1963年阿貢火山爆發時，熔岩流經寺廟附近但未摧毀建築，被視為神蹟。", "rules": "進入廟宇區域必須穿著沙龍（Sarong）並繫上腰帶。", "ig": "", "place": "Besakih Great Temple", "url": "https://www.besakih.org/", "ticket": "", "usd": "", "idr": "Rp150,000", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "temple", "loc": "ll", "lat": -8.373758774786797, "lon": 115.45262107300924, "zone": "long", "x": 1083, "y": 413, "map": "https://www.google.com/maps/search/?api=1&query=-8.373758774786797,115.45262107300924"}, {"id": "p52", "type": "spot", "cat": "景點", "sub": "", "region": "卡朗阿森", "regionEn": "Karangasem", "name": "天空之門 善惡之門", "short": "天空之門 善惡之門", "desc": "這座寺廟因其巨大的 善惡門（Candi Bentar）而享譽全球。兩座對稱的高聳石門正對著峇里島最高峰 阿貢火山，在天氣晴朗時，火山會完美地鑲嵌在門框之中，象徵著人間與神界的通道。", "rules": "路途遙遠需要排隊很久國際遊客：約 IDR 150,000（費用通常包含門票、沙龍租借、以及現場工作人員協助拍攝「倒影照」的服務）。服裝規範：進入寺廟區必須穿著沙龍（Sarong）並遮蓋肩膀與膝蓋。禁止在大門前做出親吻、瑜珈倒立等被視為不敬的動作。排隊號碼牌：抵達後請先領取拍照號碼牌。尖峰時刻排隊時間可能超過 3 小時，建議在等待期間參觀廟內其他精美的階梯與雕刻。行程規劃：從烏布出發約需 2 小時，從庫塔出發約 2.5-3 小時。", "ig": "", "place": "Penataran Agung Lempuyang Temple", "url": "https://maps.app.goo.gl/GbickTRnx4akyUaH9", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "temple", "loc": "ll", "lat": -8.391416418347506, "lon": 115.63164787352117, "zone": "long", "x": 1257, "y": 435, "map": "https://www.google.com/maps/search/?api=1&query=-8.391416418347506,115.63164787352117"}, {"id": "p53", "type": "shop", "cat": "商場", "sub": "", "region": "庫塔", "regionEn": "Kuta", "name": "Beachwalk Shopping Center", "short": "Beachwalk Shopping Center", "desc": "", "rules": "", "ig": "", "place": "", "url": "http://beachwalkbali.com/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "bag", "loc": "ll", "lat": -8.716229969499723, "lon": 115.16937798784781, "zone": "south", "x": 802, "y": 734, "map": "https://www.google.com/maps/search/?api=1&query=-8.716229969499723,115.16937798784781"}, {"id": "p54", "type": "spot", "cat": "景點", "sub": "", "region": "烏布", "regionEn": "Ubud", "name": "蠟染村", "short": "蠟染村", "desc": "", "rules": "", "ig": "", "place": "Bali Bidadari Batik", "url": "https://maps.app.goo.gl/CkbjbCGHUTiURu4UA", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "house", "loc": "ll", "lat": -8.626853249362595, "lon": 115.2560640313965, "zone": "mid", "x": 832, "y": 638, "map": "https://www.google.com/maps/search/?api=1&query=-8.626853249362595,115.2560640313965"}, {"id": "p55", "type": "spot", "cat": "景點", "sub": "", "region": "潘達瓦", "regionEn": "Pandawa", "name": "Pandawa Beach", "short": "Pandawa Beach", "desc": "", "rules": "", "ig": "", "place": "", "url": "Pandawa Beach", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "beach", "loc": "ll", "lat": -8.839364927325871, "lon": 115.18486348914944, "zone": "south", "x": 804, "y": 896, "map": "https://www.google.com/maps/search/?api=1&query=-8.839364927325871,115.18486348914944"}, {"id": "p56", "type": "spot", "cat": "景點", "sub": "", "region": "沙努爾", "regionEn": "Sanur", "name": "沙努爾碼頭", "short": "沙努爾碼頭", "desc": "", "rules": "", "ig": "", "place": "Sanur", "url": "https://maps.app.goo.gl/kHDwFwi2M7rqF7TNA", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "star", "loc": "ll", "lat": -8.70155660930512, "lon": 115.26298845509268, "zone": "south", "x": 880, "y": 745, "map": "https://www.google.com/maps/search/?api=1&query=-8.70155660930512,115.26298845509268"}, {"id": "p57", "type": "spot", "cat": "景點", "sub": "", "region": "登帕薩", "regionEn": "Denpasar", "name": "巴加山迪紀念碑Monumen Bajra Sandhi", "short": "巴加山迪紀念碑Monumen Bajra Sandhi", "desc": "", "rules": "", "ig": "", "place": "Bajra Sandhi Monument", "url": "https://neverneverlandinbali.com/spot/bajra-sandhi-monumen/", "ticket": "", "usd": "", "idr": "Rp100,000", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "star", "loc": "ll", "lat": -8.671543060725176, "lon": 115.23385328466046, "zone": "south", "x": 847, "y": 704, "map": "https://www.google.com/maps/search/?api=1&query=-8.671543060725176,115.23385328466046"}, {"id": "p58", "type": "shop", "cat": "商場", "sub": "", "region": "庫塔", "regionEn": "Kuta", "name": "購物中心Krisna Oleh - Oleh Bali Sunset Road", "short": "購物中心Krisna Oleh", "desc": "", "rules": "", "ig": "", "place": "Krisna Oleh - Oleh Bali Sunset Road", "url": "https://krisnabali.co.id/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "bag", "loc": "ll", "lat": -8.703576717766193, "lon": 115.18014501969941, "zone": "south", "x": 818, "y": 706, "map": "https://www.google.com/maps/search/?api=1&query=-8.703576717766193,115.18014501969941"}, {"id": "p59", "type": "shop", "cat": "商場", "sub": "", "region": "沙努爾", "regionEn": "Sanur", "name": "Icon Bali", "short": "Icon Bali", "desc": "", "rules": "", "ig": "", "place": "", "url": "https://iconbalimall.com/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "bag", "loc": "ll", "lat": -8.68659737605778, "lon": 115.26338385766975, "zone": "south", "x": 880, "y": 739, "map": "https://www.google.com/maps/search/?api=1&query=-8.68659737605778,115.26338385766975"}, {"id": "p60", "type": "spot", "cat": "景點", "sub": "", "region": "水明漾", "regionEn": "Seminyak", "name": "水明漾廣場 Seminyak Square", "short": "水明漾廣場 Seminyak Square", "desc": "", "rules": "", "ig": "", "place": "Seminyak Square", "url": "http://www.seminyaksquare.com/?utm_source=google&utm_medium=organic&utm_campaign=google_profile&utm_content=website_button", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "star", "loc": "ll", "lat": -8.679314982090688, "lon": 115.15671929877495, "zone": "south", "x": 793, "y": 665, "map": "https://www.google.com/maps/search/?api=1&query=-8.679314982090688,115.15671929877495"}, {"id": "p61", "type": "spot", "cat": "景點", "sub": "", "region": "蘇卡瓦提區", "regionEn": "Sukawati", "name": "Bali Zoo", "short": "Bali Zoo", "desc": "幅員遼闊的動物園，育有紅毛猩猩、大象和非洲獅，另提供互動體驗與各種表演。", "rules": "", "ig": "", "place": "", "url": "http://www.bali-zoo.com/", "ticket": "", "usd": "", "idr": "Rp395,000", "twd": "", "klook": "$645.00", "kkday": "", "review": "", "icon": "star", "loc": "ll", "lat": -8.591525795731105, "lon": 115.2655892022346, "zone": "mid", "x": 857, "y": 608, "map": "https://www.google.com/maps/search/?api=1&query=-8.591525795731105,115.2655892022346"}, {"id": "p62", "type": "spot", "cat": "景點", "sub": "", "region": "羅威那", "regionEn": "Lovina", "name": "Lovina Dolphin Watching", "short": "Lovina Dolphin Watching", "desc": "看日出以及追海豚", "rules": "", "ig": "", "place": "", "url": "https://lovinadolphinwatching.com/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "star", "loc": "ll", "lat": -8.162061961486357, "lon": 115.02123469933949, "zone": "long", "x": 576, "y": 235, "map": "https://www.google.com/maps/search/?api=1&query=-8.162061961486357,115.02123469933949"}, {"id": "p63", "type": "spot", "cat": "景點", "sub": "", "region": "吉安雅", "regionEn": "Gianyar", "name": "Varuna", "short": "Varuna", "desc": "Marine Safari Bali園區內最受矚目的標誌性設施之一。旅客可以在巨型水族景觀旁享用精緻餐飲，同時欣賞以海洋保育為主題的水下表演，視覺效果相當震撼浪漫。", "rules": "", "ig": "", "place": "VARUNA Bali", "url": "https://domesticmarinesafari.balisafarimarinepark.com/attraction/varuna-premium-package-52234", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "star", "loc": "region", "zone": "mid", "x": 930, "y": 590, "map": "https://www.google.com/maps/search/?api=1&query=VARUNA%20Bali%20Bali"}, {"id": "p64", "type": "hotel", "cat": "住宿", "sub": "4星飯店", "region": "彰古", "regionEn": "Canggu", "name": "Masmara Resort Canggu", "short": "Masmara Resort Canggu", "desc": "", "rules": "", "ig": "", "place": "", "url": "http://masmararesort.com/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "bed", "loc": "ll", "lat": -8.649692537165546, "lon": 115.1222174448105, "zone": "south", "x": 749, "y": 639, "map": "https://www.google.com/maps/search/?api=1&query=-8.649692537165546,115.1222174448105"}, {"id": "p65", "type": "hotel", "cat": "住宿", "sub": "經典VILLA", "region": "彰古", "regionEn": "Canggu", "name": "Manca Villa Canggu", "short": "Manca Villa Canggu", "desc": "", "rules": "", "ig": "", "place": "Manca Villa Canggu by iNi Vie Hospitality", "url": "http://inivie.com/mancavilla/?utm_source=google&utm_medium=organic&utm_campaign=google_business_profile", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "house", "loc": "ll", "lat": -8.650165970927164, "lon": 115.15001024093924, "zone": "south", "x": 780, "y": 641, "map": "https://www.google.com/maps/search/?api=1&query=-8.650165970927164,115.15001024093924"}, {"id": "p66", "type": "hotel", "cat": "住宿", "sub": "經典VILLA", "region": "彰古", "regionEn": "Canggu", "name": "AEERA VILLA Canggu", "short": "AEERA VILLA Canggu", "desc": "", "rules": "※在Canggu區，行程須留意，僅有4間1Bed Room", "ig": "", "place": "Aeera Villa Canggu by iNi Vie Hospitality", "url": "http://inivie.com/aeeravilla/?utm_source=google&utm_medium=organic&utm_campaign=google_business_profile", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "house", "loc": "ll", "lat": -8.65035597102884, "lon": 115.14837490046558, "zone": "south", "x": 777, "y": 641, "map": "https://www.google.com/maps/search/?api=1&query=-8.65035597102884,115.14837490046558"}, {"id": "p67", "type": "hotel", "cat": "住宿", "sub": "4星飯店", "region": "登帕薩", "regionEn": "Denpasar", "name": "b Hotel Bali & Spa", "short": "b Hotel Bali & Spa", "desc": "", "rules": "", "ig": "", "place": "", "url": "http://www.bhotelbali.com/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "bed", "loc": "ll", "lat": -8.702531879676746, "lon": 115.18359794789737, "zone": "south", "x": 821, "y": 705, "map": "https://www.google.com/maps/search/?api=1&query=-8.702531879676746,115.18359794789737"}, {"id": "p68", "type": "hotel", "cat": "住宿", "sub": "4星飯店", "region": "登帕薩", "regionEn": "Denpasar", "name": "HARRIS Hotel & Residence Sunset Road", "short": "HARRIS Hotel & Residence Su…", "desc": "", "rules": "", "ig": "", "place": "HARRIS Hotel & Residence Sunset Road - Bali", "url": "https://www.discoverasr.com/en/harris/indonesia/harris-hotel-residence-sunset-road-bali?utm_source=google&utm_medium=gmb&utm_campaign=-google-gmb-alwayson-20220101-all-en-id-id-HSRD--&utm_content=--", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "bed", "loc": "ll", "lat": -8.707362155076805, "lon": 115.18765548697432, "zone": "south", "x": 825, "y": 712, "map": "https://www.google.com/maps/search/?api=1&query=-8.707362155076805,115.18765548697432"}, {"id": "p69", "type": "hotel", "cat": "住宿", "sub": "5星飯店", "region": "金巴蘭", "regionEn": "Jimbaran", "name": "AYANA Resort Bali", "short": "AYANA Resort Bali", "desc": "", "rules": "", "ig": "", "place": "", "url": "https://www.ayana.com/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "bed", "loc": "ll", "lat": -8.785921123582225, "lon": 115.1391331894, "zone": "south", "x": 752, "y": 852, "map": "https://www.google.com/maps/search/?api=1&query=-8.785921123582225,115.1391331894"}, {"id": "p70", "type": "hotel", "cat": "住宿", "sub": "典藏VILLA", "region": "金巴蘭", "regionEn": "Jimbaran", "name": "Vivala Villa VILLA", "short": "Vivala Villa VILLA", "desc": "", "rules": "", "ig": "", "place": "Vivara Bali Private Pool Villas & Spa Retreat", "url": "http://www.vivarabali.com/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "house", "loc": "ll", "lat": -8.791208047010041, "lon": 115.14732315999188, "zone": "south", "x": 761, "y": 858, "map": "https://www.google.com/maps/search/?api=1&query=-8.791208047010041,115.14732315999188"}, {"id": "p71", "type": "hotel", "cat": "住宿", "sub": "典藏VILLA", "region": "金巴蘭", "regionEn": "Jimbaran", "name": "Cross Bali Breakers", "short": "Cross Bali Breakers", "desc": "", "rules": "", "ig": "", "place": "", "url": "https://www.sonohotelsresortsapac.com/crossbali", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "house", "loc": "ll", "lat": -8.802130743062419, "lon": 115.13375781395678, "zone": "south", "x": 746, "y": 867, "map": "https://www.google.com/maps/search/?api=1&query=-8.802130743062419,115.13375781395678"}, {"id": "p72", "type": "hotel", "cat": "住宿", "sub": "奢華VILLA", "region": "金巴蘭", "regionEn": "Jimbaran", "name": "Abi Jimbaran", "short": "Abi Jimbaran", "desc": "", "rules": "", "ig": "", "place": "Abi Bali Resort Villas & Spa", "url": "https://www.abibalivilla.com/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "house", "loc": "ll", "lat": -8.792057352996002, "lon": 115.15379700046557, "zone": "south", "x": 767, "y": 859, "map": "https://www.google.com/maps/search/?api=1&query=-8.792057352996002,115.15379700046557"}, {"id": "p73", "type": "hotel", "cat": "住宿", "sub": "奢華VILLA", "region": "金巴蘭", "regionEn": "Jimbaran", "name": "Kinama", "short": "Kinama", "desc": "", "rules": "", "ig": "", "place": "Kinama Villa", "url": "http://kinamabali.com/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "house", "loc": "ll", "lat": -8.779706237644987, "lon": 115.17606038697436, "zone": "south", "x": 791, "y": 848, "map": "https://www.google.com/maps/search/?api=1&query=-8.779706237644987,115.17606038697436"}, {"id": "p74", "type": "hotel", "cat": "住宿", "sub": "奢華VILLA", "region": "金巴蘭", "regionEn": "Jimbaran", "name": "LUMBINI VILLA Jimbaran", "short": "LUMBINI VILLA Jimbaran", "desc": "", "rules": "", "ig": "", "place": "Lumbini Luxury Villas and Spa", "url": "https://lumbinivillas.reserveonline.id/book/608", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "house", "loc": "ll", "lat": -8.774823628346796, "lon": 115.17273446977549, "zone": "south", "x": 788, "y": 843, "map": "https://www.google.com/maps/search/?api=1&query=-8.774823628346796,115.17273446977549"}, {"id": "p75", "type": "hotel", "cat": "住宿", "sub": "VILLA", "region": "金巴蘭", "regionEn": "Jimbaran", "name": "KARMA VILLA", "short": "KARMA VILLA", "desc": "", "rules": "", "ig": "", "place": "Karma Jimbaran", "url": "https://karmagroup.com/find-destination/karma-resorts/karma-jimbaran/?utm_source=google&utm_medium=localseo&utm_campaign=localplaces&utm_content=jimbaran", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "house", "loc": "ll", "lat": -8.782205592637746, "lon": 115.16174786654184, "zone": "south", "x": 775, "y": 850, "map": "https://www.google.com/maps/search/?api=1&query=-8.782205592637746,115.16174786654184"}, {"id": "p76", "type": "hotel", "cat": "住宿", "sub": "4星飯店", "region": "庫塔", "regionEn": "Kuta", "name": "KUTA GALLERIA HOTEL", "short": "KUTA GALLERIA HOTEL", "desc": "", "rules": "", "ig": "", "place": "Kuta Galleria Hotel", "url": "https://kutagalleria.com/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "bed", "loc": "ll", "lat": -8.72202312381322, "lon": 115.18622031395678, "zone": "south", "x": 822, "y": 731, "map": "https://www.google.com/maps/search/?api=1&query=-8.72202312381322,115.18622031395678"}, {"id": "p77", "type": "hotel", "cat": "住宿", "sub": "4星飯店", "region": "庫塔", "regionEn": "Kuta", "name": "Solia Legian Bali Hotel", "short": "Solia Legian Bali Hotel", "desc": "", "rules": "", "ig": "", "place": "", "url": "https://solialegian.com/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "bed", "loc": "ll", "lat": -8.708364371303334, "lon": 115.17293134093923, "zone": "south", "x": 812, "y": 713, "map": "https://www.google.com/maps/search/?api=1&query=-8.708364371303334,115.17293134093923"}, {"id": "p78", "type": "hotel", "cat": "住宿", "sub": "4星飯店", "region": "庫塔", "regionEn": "Kuta", "name": "Anathera Resort Kuta", "short": "Anathera Resort Kuta", "desc": "", "rules": "", "ig": "", "place": "", "url": "http://www.anatheraresort.com/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "bed", "loc": "ll", "lat": -8.733000811016822, "lon": 115.17093099861175, "zone": "south", "x": 806, "y": 744, "map": "https://www.google.com/maps/search/?api=1&query=-8.733000811016822,115.17093099861175"}, {"id": "p79", "type": "hotel", "cat": "住宿", "sub": "4星飯店", "region": "庫塔", "regionEn": "Kuta", "name": "Episode Kuta Bali", "short": "Episode Kuta Bali", "desc": "", "rules": "", "ig": "", "place": "", "url": "https://episodekutabali.jhlcollections.com/?utm_source=google&utm_medium=gmb&utm_campaign=gmb_ekb", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "bed", "loc": "ll", "lat": -8.722145823868978, "lon": 115.18482749861175, "zone": "south", "x": 820, "y": 731, "map": "https://www.google.com/maps/search/?api=1&query=-8.722145823868978,115.18482749861175"}, {"id": "p80", "type": "hotel", "cat": "住宿", "sub": "4星飯店", "region": "庫塔", "regionEn": "Kuta", "name": "THE 1O1 Bali Fontana Seminyak", "short": "THE 1O1 Bali Fontana Seminy…", "desc": "", "rules": "", "ig": "", "place": "", "url": "http://book101.com/balifontanaseminyak", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "bed", "loc": "ll", "lat": -8.703865347031169, "lon": 115.177380927448, "zone": "south", "x": 816, "y": 706, "map": "https://www.google.com/maps/search/?api=1&query=-8.703865347031169,115.177380927448"}, {"id": "p81", "type": "hotel", "cat": "住宿", "sub": "4星飯店", "region": "庫塔", "regionEn": "Kuta", "name": "Fairfields sunset bali", "short": "Fairfields sunset bali", "desc": "", "rules": "", "ig": "", "place": "Fairfield by Marriott Bali Kuta Sunset Road", "url": "https://www.marriott.com/en-us/hotels/dpsfb-fairfield-bali-kuta-sunset-road/overview/?scid=f2ae0541-1279-4f24-b197-a979c79310b0", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "bed", "loc": "ll", "lat": -8.714045449985736, "lon": 115.18397115790198, "zone": "south", "x": 820, "y": 722, "map": "https://www.google.com/maps/search/?api=1&query=-8.714045449985736,115.18397115790198"}, {"id": "p82", "type": "hotel", "cat": "住宿", "sub": "5星飯店", "region": "庫塔", "regionEn": "Kuta", "name": "Mamaka Bali", "short": "Mamaka Bali", "desc": "", "rules": "", "ig": "", "place": "", "url": "https://ovolohotels.com/mamaka/?utm_source=gbp_listing&utm_medium=organic", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "地理位置很不錯", "icon": "bed", "loc": "ll", "lat": -8.710229421732283, "lon": 115.16793823308372, "zone": "south", "x": 807, "y": 715, "map": "https://www.google.com/maps/search/?api=1&query=-8.710229421732283,115.16793823308372"}, {"id": "p83", "type": "hotel", "cat": "住宿", "sub": "5星飯店", "region": "努沙杜瓦", "regionEn": "Nusa Dua", "name": "Westin Resort Nusa Dua, Bali", "short": "Westin Resort Nusa Dua, Bali", "desc": "", "rules": "", "ig": "", "place": "The Westin Resort Nusa Dua, Bali", "url": "https://www.marriott.com/en-us/hotels/dpswi-the-westin-resort-nusa-dua-bali/overview/?scid=f2ae0541-1279-4f24-b197-a979c79310b0", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "bed", "loc": "ll", "lat": -8.795415888069988, "lon": 115.22989842009007, "zone": "south", "x": 845, "y": 857, "map": "https://www.google.com/maps/search/?api=1&query=-8.795415888069988,115.22989842009007"}, {"id": "p84", "type": "hotel", "cat": "住宿", "sub": "5星飯店", "region": "努沙杜瓦", "regionEn": "Nusa Dua", "name": "The Ritz-Carlton", "short": "The Ritz-Carlton", "desc": "", "rules": "", "ig": "", "place": "The Ritz-Carlton, Bali", "url": "https://www.ritzcarlton.com/en/hotels/dpssw-the-ritz-carlton-bali/overview/?scid=f2ae0541-1279-4f24-b197-a979c79310b0", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "bed", "loc": "ll", "lat": -8.83018513328784, "lon": 115.21535083048597, "zone": "south", "x": 831, "y": 889, "map": "https://www.google.com/maps/search/?api=1&query=-8.83018513328784,115.21535083048597"}, {"id": "p85", "type": "hotel", "cat": "住宿", "sub": "5星飯店", "region": "努沙杜瓦", "regionEn": "Nusa Dua", "name": "Mulia Resort", "short": "Mulia Resort", "desc": "", "rules": "", "ig": "", "place": "Mulia Resort - Nusa Dua, Bali", "url": "https://www.themulia.com/bali/mulia-resort", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "bed", "loc": "ll", "lat": -8.815605347161524, "lon": 115.22245540927757, "zone": "south", "x": 839, "y": 876, "map": "https://www.google.com/maps/search/?api=1&query=-8.815605347161524,115.22245540927757"}, {"id": "p86", "type": "hotel", "cat": "住宿", "sub": "5星飯店", "region": "努沙杜瓦", "regionEn": "Nusa Dua", "name": "Hilton Bali Resort", "short": "Hilton Bali Resort", "desc": "", "rules": "", "ig": "", "place": "", "url": "https://www.hilton.com/en/hotels/dpsbahi-hilton-bali-resort/?SEO_id=GMB-APAC-HI-DPSBAHI", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "bed", "loc": "ll", "lat": -8.824510997608462, "lon": 115.21915092770948, "zone": "south", "x": 835, "y": 884, "map": "https://www.google.com/maps/search/?api=1&query=-8.824510997608462,115.21915092770948"}, {"id": "p87", "type": "hotel", "cat": "住宿", "sub": "5星飯店", "region": "努沙杜瓦", "regionEn": "Nusa Dua", "name": "The St. Regis Bali Resort", "short": "The St. Regis Bali Resort", "desc": "", "rules": "", "ig": "", "place": "", "url": "https://www.marriott.com/en-us/hotels/dpsxr-the-st-regis-bali-resort/overview/?scid=f2ae0541-1279-4f24-b197-a979c79310b0", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "bed", "loc": "ll", "lat": -8.81191708566377, "lon": 115.22624499157264, "zone": "south", "x": 842, "y": 873, "map": "https://www.google.com/maps/search/?api=1&query=-8.81191708566377,115.22624499157264"}, {"id": "p88", "type": "hotel", "cat": "住宿", "sub": "5星飯店", "region": "努沙杜瓦", "regionEn": "Nusa Dua", "name": "Sofitel Bali", "short": "Sofitel Bali", "desc": "", "rules": "", "ig": "", "place": "Sofitel Bali Nusa Dua Beach Resort", "url": "http://sofitel.accor.com/hotels/9078?merchantid=seo-maps-ID-9078&sourceid=aw-cen&utm_source=google+Maps&utm_medium=seo+maps&utm_campaign=seo+maps&utm_term=Sofitel-Launch", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "bed", "loc": "ll", "lat": -8.79034511514804, "lon": 115.2304665612908, "zone": "south", "x": 847, "y": 854, "map": "https://www.google.com/maps/search/?api=1&query=-8.79034511514804,115.2304665612908"}, {"id": "p89", "type": "hotel", "cat": "住宿", "sub": "5星飯店", "region": "努沙杜瓦", "regionEn": "Nusa Dua", "name": "Grand Hyatt Bali", "short": "Grand Hyatt Bali", "desc": "", "rules": "", "ig": "", "place": "", "url": "https://www.hyatt.com/grand-hyatt/en-US/balgh-grand-hyatt-bali?src=corp_lclb_google_seo_balgh&utm_source=google&utm_medium=organic&utm_campaign=lmr", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "bed", "loc": "ll", "lat": -8.802644178087446, "lon": 115.23261232854277, "zone": "south", "x": 848, "y": 864, "map": "https://www.google.com/maps/search/?api=1&query=-8.802644178087446,115.23261232854277"}, {"id": "p90", "type": "hotel", "cat": "住宿", "sub": "5星飯店", "region": "努沙杜瓦", "regionEn": "Nusa Dua", "name": "Novotel Bali Benoa", "short": "Novotel Bali Benoa", "desc": "", "rules": "", "ig": "", "place": "", "url": "https://all.accor.com/lien_externe.svlt?goto=fiche_hotel&code_hotel=1922&merchantid=seo-maps-ID-1922&sourceid=aw-cen&utm_medium=seo%20maps&utm_source=google%20Maps&utm_campaign=seo%20maps", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "bed", "loc": "ll", "lat": -8.76308757073935, "lon": 115.22272361752613, "zone": "south", "x": 848, "y": 837, "map": "https://www.google.com/maps/search/?api=1&query=-8.76308757073935,115.22272361752613"}, {"id": "p91", "type": "hotel", "cat": "住宿", "sub": "6星飯店", "region": "努沙杜瓦", "regionEn": "Nusa Dua", "name": "阿普爾瓦凱賓斯基", "short": "阿普爾瓦凱賓斯基", "desc": "", "rules": "", "ig": "", "place": "The Apurva Kempinski Bali", "url": "https://www.kempinski.com/en/the-apurva-kempinski-bali?utm_medium=organic&utm_source=google&utm_campaign=KIDPS1&utm_content=gmb&source=S308962248", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "bed", "loc": "ll", "lat": -8.828361640869788, "lon": 115.21567269557377, "zone": "south", "x": 832, "y": 888, "map": "https://www.google.com/maps/search/?api=1&query=-8.828361640869788,115.21567269557377"}, {"id": "p92", "type": "hotel", "cat": "住宿", "sub": "奢華VILLA", "region": "努沙杜瓦", "regionEn": "Nusa Dua", "name": "TAMAN DHAMAWANGSA nusa dua (No加床)", "short": "TAMAN DHAMAWANGSA nusa dua …", "desc": "", "rules": "", "ig": "", "place": "TAMAN DHARMAWANGSA SUITES", "url": "https://www.tamandharmawangsasuites.com/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "house", "loc": "ll", "lat": -8.81627938719021, "lon": 115.19157538600273, "zone": "south", "x": 809, "y": 876, "map": "https://www.google.com/maps/search/?api=1&query=-8.81627938719021,115.19157538600273"}, {"id": "p93", "type": "hotel", "cat": "住宿", "sub": "奢華VILLA", "region": "努沙杜瓦", "regionEn": "Nusa Dua", "name": "Luxotic Villa Nusa Dua", "short": "Luxotic Villa Nusa Dua", "desc": "", "rules": "", "ig": "", "place": "Luxotic Private Villa & Resort", "url": "https://luxoticvilla.com/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "house", "loc": "ll", "lat": -8.788580245581361, "lon": 115.20039169861174, "zone": "south", "x": 818, "y": 856, "map": "https://www.google.com/maps/search/?api=1&query=-8.788580245581361,115.20039169861174"}, {"id": "p94", "type": "hotel", "cat": "住宿", "sub": "VILLA", "region": "努沙杜瓦", "regionEn": "Nusa Dua", "name": "Samabe Bali Suites & Villas", "short": "Samabe Bali Suites & Villas", "desc": "", "rules": "", "ig": "", "place": "", "url": "https://www.samabe.com/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "house", "loc": "ll", "lat": -8.832795552171588, "lon": 115.21175804427749, "zone": "south", "x": 828, "y": 892, "map": "https://www.google.com/maps/search/?api=1&query=-8.832795552171588,115.21175804427749"}, {"id": "p95", "type": "hotel", "cat": "住宿", "sub": "VILLA", "region": "努沙杜瓦", "regionEn": "Nusa Dua", "name": "Ulu Segara Luxury Suites & Villas", "short": "Ulu Segara Luxury Suites & …", "desc": "", "rules": "", "ig": "", "place": "", "url": "https://ulusegara.com/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "house", "loc": "ll", "lat": -8.834129351212676, "lon": 115.21053406601892, "zone": "south", "x": 827, "y": 893, "map": "https://www.google.com/maps/search/?api=1&query=-8.834129351212676,115.21053406601892"}, {"id": "p96", "type": "hotel", "cat": "住宿", "sub": "典藏VILLA", "region": "水明漾", "regionEn": "Seminyak", "name": "Cyrus Villa Seminyak", "short": "Cyrus Villa Seminyak", "desc": "", "rules": "", "ig": "", "place": "Cyrus Villa Seminyak by iNi Vie Hospitality", "url": "http://inivie.com/cyrusvilla/?utm_source=google&utm_medium=organic&utm_campaign=google_business_profile", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "house", "loc": "ll", "lat": -8.675971144271644, "lon": 115.17501894356899, "zone": "south", "x": 813, "y": 664, "map": "https://www.google.com/maps/search/?api=1&query=-8.675971144271644,115.17501894356899"}, {"id": "p97", "type": "hotel", "cat": "住宿", "sub": "典藏VILLA", "region": "水明漾", "regionEn": "Seminyak", "name": "Sampatti Villas", "short": "Sampatti Villas", "desc": "", "rules": "", "ig": "", "place": "", "url": "https://sampattivilla.com/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "house", "loc": "ll", "lat": -8.691756359542893, "lon": 115.17494245628426, "zone": "south", "x": 813, "y": 687, "map": "https://www.google.com/maps/search/?api=1&query=-8.691756359542893,115.17494245628426"}, {"id": "p98", "type": "hotel", "cat": "住宿", "sub": "奢華VILLA", "region": "水明漾", "regionEn": "Seminyak", "name": "JERAMI VILLA seminyak", "short": "JERAMI VILLA seminyak", "desc": "", "rules": "", "ig": "", "place": "Villa jerami", "url": "http://villajerami.com/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "house", "loc": "ll", "lat": -8.687127001117654, "lon": 115.17032861369533, "zone": "south", "x": 808, "y": 675, "map": "https://www.google.com/maps/search/?api=1&query=-8.687127001117654,115.17032861369533"}, {"id": "p99", "type": "hotel", "cat": "住宿", "sub": "經典VILLA", "region": "水明漾", "regionEn": "Seminyak", "name": "DiKubu Bali Villa and Suite Seminyak", "short": "DiKubu Bali Villa and Suite…", "desc": "", "rules": "(特殊Villa連通房，2br，共2間)", "ig": "", "place": "Dikubu Bali Villa and Suite Seminyak", "url": "https://dikububali.com/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "house", "loc": "ll", "lat": -8.66528866450889, "lon": 115.16462514810992, "zone": "south", "x": 802, "y": 654, "map": "https://www.google.com/maps/search/?api=1&query=-8.66528866450889,115.16462514810992"}, {"id": "p100", "type": "hotel", "cat": "住宿", "sub": "經典VILLA", "region": "水明漾", "regionEn": "Seminyak", "name": "INI VIE VILLA", "short": "INI VIE VILLA", "desc": "", "rules": "", "ig": "", "place": "Ini Vie Villa Seminyak by iNi Vie Hospitality", "url": "http://inivie.com/inivievilla/?utm_source=google&utm_medium=organic&utm_campaign=google_business_profile", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "house", "loc": "ll", "lat": -8.704325048727593, "lon": 115.17883954717037, "zone": "south", "x": 817, "y": 707, "map": "https://www.google.com/maps/search/?api=1&query=-8.704325048727593,115.17883954717037"}, {"id": "p101", "type": "hotel", "cat": "住宿", "sub": "經典VILLA", "region": "水明漾", "regionEn": "Seminyak", "name": "Bajra Villa Seminyak", "short": "Bajra Villa Seminyak", "desc": "", "rules": "(特殊Villa連通房，2br，3br僅各1間)※6歲以上必須佔床,不能不佔床。", "ig": "", "place": "", "url": "http://www.bajravilla.com/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "house", "loc": "ll", "lat": -8.675860148307368, "lon": 115.1648771716293, "zone": "south", "x": 802, "y": 663, "map": "https://www.google.com/maps/search/?api=1&query=-8.675860148307368,115.1648771716293"}, {"id": "p102", "type": "hotel", "cat": "住宿", "sub": "5星飯店", "region": "塔巴南", "regionEn": "Tabanan", "name": "Nuanu Creative City", "short": "Nuanu Creative City", "desc": "", "rules": "", "ig": "", "place": "", "url": "http://nuanu.com/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "bed", "loc": "ll", "lat": -8.628798309178697, "lon": 115.10095466450082, "zone": "south", "x": 729, "y": 610, "map": "https://www.google.com/maps/search/?api=1&query=-8.628798309178697,115.10095466450082"}, {"id": "p103", "type": "hotel", "cat": "住宿", "sub": "4星飯店", "region": "烏布", "regionEn": "Ubud", "name": "Anumana Hotel Ubud", "short": "Anumana Hotel Ubud", "desc": "", "rules": "", "ig": "", "place": "", "url": "http://www.anumanaubud.com/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "bed", "loc": "ll", "lat": -8.518172190351825, "lon": 115.2621116490731, "zone": "mid", "x": 850, "y": 584, "map": "https://www.google.com/maps/search/?api=1&query=-8.518172190351825,115.2621116490731"}, {"id": "p104", "type": "hotel", "cat": "住宿", "sub": "5星飯店", "region": "烏布", "regionEn": "Ubud", "name": "The Garcia Ubud", "short": "The Garcia Ubud", "desc": "", "rules": "", "ig": "", "place": "The Garcia Ubud Hotel & Resort", "url": "https://thegarciaubud.com/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "bed", "loc": "ll", "lat": -8.561708433102543, "lon": 115.26760450231937, "zone": "mid", "x": 867, "y": 602, "map": "https://www.google.com/maps/search/?api=1&query=-8.561708433102543,115.26760450231937"}, {"id": "p105", "type": "hotel", "cat": "住宿", "sub": "5星飯店", "region": "烏布", "regionEn": "Ubud", "name": "AMAREA RESORT UBUD", "short": "AMAREA RESORT UBUD", "desc": "", "rules": "", "ig": "https://www.instagram.com/amareaubud/", "place": "Amarea Resort Ubud by iNi Vie Hospitality", "url": "http://inivie.com/amarearesortubud/?utm_source=google&utm_medium=organic&utm_campaign=google_business_profile", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "bed", "loc": "ll", "lat": -8.521084744857934, "lon": 115.27263117358511, "zone": "mid", "x": 862, "y": 584, "map": "https://www.google.com/maps/search/?api=1&query=-8.521084744857934,115.27263117358511"}, {"id": "p106", "type": "hotel", "cat": "住宿", "sub": "5星飯店", "region": "烏魯瓦圖", "regionEn": "Uluwatu", "name": "烏魯瓦度萬麗Renaissance Bali Uluwatu Resort & Spa", "short": "烏魯瓦度萬麗Renaissance Bali Uluw…", "desc": "", "rules": "", "ig": "", "place": "Renaissance Bali Uluwatu Resort & Spa", "url": "https://www.marriott.com/en-us/hotels/dpsuw-renaissance-bali-uluwatu-resort-and-spa/overview/?scid=f2ae0541-1279-4f24-b197-a979c79310b0", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "bed", "loc": "ll", "lat": -8.812641363023204, "lon": 115.14478382023684, "zone": "south", "x": 759, "y": 876, "map": "https://www.google.com/maps/search/?api=1&query=-8.812641363023204,115.14478382023684"}, {"id": "p107", "type": "hotel", "cat": "住宿", "sub": "5星飯店", "region": "烏魯瓦圖", "regionEn": "Uluwatu", "name": "The edge", "short": "The edge", "desc": "", "rules": "", "ig": "", "place": "", "url": "https://theedgebali.com/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "bed", "loc": "ll", "lat": -8.843162307051353, "lon": 115.12555563916811, "zone": "south", "x": 742, "y": 906, "map": "https://www.google.com/maps/search/?api=1&query=-8.843162307051353,115.12555563916811"}, {"id": "p108", "type": "food", "cat": "餐飲", "sub": "", "region": "彰古", "regionEn": "Canggu", "name": "nüde cafe Berawa", "short": "nüde cafe Berawa", "desc": "健康美味的招牌早午餐，是遠距工作者與網美喜愛的超人氣健康咖啡廳，以明亮舒適的開放式空間與豐富的健康輕食聞名。", "rules": "健康輕食與澳洲早午餐", "ig": "https://www.instagram.com/nudebali/", "place": "", "url": "https://nude-bali.com/locations/berawa", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "cafe", "loc": "ll", "lat": -8.65882919575128, "lon": 115.14105583766188, "zone": "south", "x": 769, "y": 649, "map": "https://www.google.com/maps/search/?api=1&query=-8.65882919575128,115.14105583766188"}, {"id": "p109", "type": "food", "cat": "餐飲", "sub": "", "region": "彰古", "regionEn": "Canggu", "name": "Riviera Bistro | Berawa", "short": "Riviera Bistro", "desc": "結合地中海浪漫風情與精緻海鮮料理的高人氣質感餐酒館，以優雅的法義海岸風美學與頂級新鮮食材著稱。", "rules": "地中海海鮮與柴火直火料理", "ig": "https://www.instagram.com/rivierabistro.berawa/", "place": "", "url": "https://rivieragroupbali.com/riviera-bistro/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "food", "loc": "ll", "lat": -8.658629691400689, "lon": 115.13831714435597, "zone": "south", "x": 765, "y": 649, "map": "https://www.google.com/maps/search/?api=1&query=-8.658629691400689,115.13831714435597"}, {"id": "p110", "type": "food", "cat": "餐飲", "sub": "", "region": "彰古", "regionEn": "Canggu", "name": "Copenhagen CAFE Berawa", "short": "Copenhagen CAFE Berawa", "desc": "自由搭配的北歐早午餐，獨創菜單讓顧客自由挑選迷你尺寸的北歐特色麵包、燻鮭魚、手工肉丸等打造專屬拼盤。", "rules": "自由搭配北歐早午餐拼盤", "ig": "https://www.instagram.com/copenhagencafe.bali/", "place": "", "url": "http://cphbali.com/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "cafe", "loc": "ll", "lat": -8.65799329740265, "lon": 115.13788799096079, "zone": "south", "x": 765, "y": 648, "map": "https://www.google.com/maps/search/?api=1&query=-8.65799329740265,115.13788799096079"}, {"id": "p111", "type": "food", "cat": "餐飲", "sub": "", "region": "彰古", "regionEn": "Canggu", "name": "ZIN Cafe", "short": "ZIN Cafe", "desc": "超人氣指標性咖啡廳，壯觀的竹造建築設計：整棟建築運用大量的天然竹子打造出多層次的挑高空間與通風露台，完美融合熱帶自然風情與前衛工藝，視覺效果極具震撼力。", "rules": "網美打卡與建築美學地標", "ig": "https://www.instagram.com/zin_cafe/", "place": "", "url": "https://zin.world/zin-cafe/?utm_source=google_zincafe", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "cafe", "loc": "ll", "lat": -8.659138805824123, "lon": 115.13355354166957, "zone": "south", "x": 760, "y": 649, "map": "https://www.google.com/maps/search/?api=1&query=-8.659138805824123,115.13355354166957"}, {"id": "p112", "type": "food", "cat": "餐飲", "sub": "", "region": "彰古", "regionEn": "Canggu", "name": "Sazón", "short": "Sazón", "desc": "道地拉丁美洲美饌：主打風味濃郁的加勒比海與拉丁美洲經典菜餚，嚴選新鮮食材並運用多樣化的香料，呈現出層次豐富且充滿熱帶風情的美味料理。", "rules": "", "ig": "https://www.instagram.com/sazon.bali/", "place": "", "url": "http://sazonbali.com/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "food", "loc": "ll", "lat": -8.65612653546607, "lon": 115.13127902867518, "zone": "south", "x": 757, "y": 647, "map": "https://www.google.com/maps/search/?api=1&query=-8.65612653546607,115.13127902867518"}, {"id": "p113", "type": "food", "cat": "餐飲", "sub": "", "region": "彰古", "regionEn": "Canggu", "name": "Luma", "short": "Luma", "desc": "獨特的柴火直烤（Wood-fired）料理：主打融合地中海風味與在地優質食材的直火烹調藝術，透過木柴燃燒帶出食物最純粹的炭香與層次，每一道菜都充滿細膩的手工溫度。", "rules": "", "ig": "https://www.instagram.com/luma.bali/", "place": "", "url": "https://www.lumabali.com/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "food", "loc": "ll", "lat": -8.654592799991304, "lon": 115.13172316765838, "zone": "south", "x": 757, "y": 645, "map": "https://www.google.com/maps/search/?api=1&query=-8.654592799991304,115.13172316765838"}, {"id": "p114", "type": "food", "cat": "餐飲", "sub": "", "region": "彰古", "regionEn": "Canggu", "name": "Desa Kitsuné", "short": "Desa Kitsuné", "desc": "泳池俱樂部與沉浸式餐飲：擁有極具設計感的戶外無邊際泳池、日光浴區以及多間融合法式精緻與亞洲風味的高端餐廳與酒吧，白天是放鬆的綠洲，夜晚則化身為時尚的微醺聚會所。", "rules": "CLUB性質", "ig": "https://www.instagram.com/desakitsunebali/", "place": "", "url": "https://desakitsune.com/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "food", "loc": "ll", "lat": -8.654253386352213, "lon": 115.12897658592927, "zone": "south", "x": 755, "y": 645, "map": "https://www.google.com/maps/search/?api=1&query=-8.654253386352213,115.12897658592927"}, {"id": "p115", "type": "food", "cat": "餐飲", "sub": "", "region": "彰古", "regionEn": "Canggu", "name": "MUDA Restaurant", "short": "MUDA Restaurant", "desc": "精緻美味的全天候餐飲：提供融合澳洲早午餐精髓與亞洲風味的創意料理，從健康營養的酪梨吐司、豐盛的早午餐拼盤到精緻主食與甜點一應俱全。", "rules": "健康輕食與澳洲早午餐", "ig": "https://www.instagram.com/muda.restaurant/", "place": "", "url": "https://www.bysuka.com/muda-by-suka", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "food", "loc": "ll", "lat": -8.652768448083108, "lon": 115.13034987679383, "zone": "south", "x": 755, "y": 643, "map": "https://www.google.com/maps/search/?api=1&query=-8.652768448083108,115.13034987679383"}, {"id": "p116", "type": "food", "cat": "餐飲", "sub": "", "region": "彰古", "regionEn": "Canggu", "name": "Lulu Bistrot", "short": "Lulu Bistrot", "desc": "道地經典法式料理：主打正宗且講究的手工法式小館菜色，從經典的法式傳統肉派、牛排薯條、油封鴨到精緻的法式甜點，每一道都充滿濃厚的人情味與細緻風味。", "rules": "地中海海鮮與柴火直火料理餐酒館", "ig": "https://www.instagram.com/lulu.bistrot/", "place": "", "url": "https://www.lulubistrot.com/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "food", "loc": "ll", "lat": -8.65242903279925, "lon": 115.13275313580678, "zone": "south", "x": 757, "y": 643, "map": "https://www.google.com/maps/search/?api=1&query=-8.65242903279925,115.13275313580678"}, {"id": "p117", "type": "food", "cat": "餐飲", "sub": "", "region": "彰古", "regionEn": "Canggu", "name": "Penny Lane", "short": "Penny Lane", "desc": "帶有復古文藝復興與波希米亞混搭風格聞名的超人氣網紅餐廳。這裡憑藉著宛如宮殿般的震撼建築美學與出色的餐酒表現，成為長谷標誌性的打卡聖地。", "rules": "網美打卡與建築美學地標", "ig": "https://www.instagram.com/pennylanebali/", "place": "", "url": "https://pennylanebali.com/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "food", "loc": "ll", "lat": -8.652259325042571, "lon": 115.130779030189, "zone": "south", "x": 756, "y": 643, "map": "https://www.google.com/maps/search/?api=1&query=-8.652259325042571,115.130779030189"}, {"id": "p118", "type": "food", "cat": "餐飲", "sub": "", "region": "彰古", "regionEn": "Canggu", "name": "Manhattan Cocktail Bar & Kitchen", "short": "Manhattan Cocktail Bar & Ki…", "desc": "紐約都會復古美學：室內裝潢融合了經典的磚牆、皮革沙發、低調奢華的金屬與溫潤木質元素，散發出濃厚的美式爵士年代與精緻酒館氣息。", "rules": "", "ig": "", "place": "", "url": "https://linktr.ee/manhattan_bali", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "food", "loc": "ll", "lat": -8.650986514429519, "lon": 115.13374018861566, "zone": "south", "x": 758, "y": 642, "map": "https://www.google.com/maps/search/?api=1&query=-8.650986514429519,115.13374018861566"}, {"id": "p119", "type": "food", "cat": "餐飲", "sub": "", "region": "彰古", "regionEn": "Canggu", "name": "Santanera", "short": "Santanera", "desc": "主打結合現代拉丁美洲與地中海風味的精緻料理。內部裝潢融合了奢華復古皮沙發與優雅氛圍，並設有能欣賞美景的開放式屋頂露台，是當地極具人氣的聚餐與調酒勝地。", "rules": "", "ig": "https://www.instagram.com/santanerabali/", "place": "", "url": "http://www.santanerabali.com/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "food", "loc": "ll", "lat": -8.651113795684436, "lon": 115.13090777620754, "zone": "south", "x": 756, "y": 642, "map": "https://www.google.com/maps/search/?api=1&query=-8.651113795684436,115.13090777620754"}, {"id": "p120", "type": "food", "cat": "餐飲", "sub": "", "region": "彰古", "regionEn": "Canggu", "name": "La Brisa Bali | Beach Club", "short": "La Brisa Bali", "desc": "知名極具永續環保概念的標誌性海灘俱樂部。整座建築使用回收的印尼傳統漁船與老木材建造，完美營造出波希米亞度假風情，提供精緻海鮮料理、手工調酒以及絕佳的落日海景。", "rules": "環保廢棄漁船改造的波希米亞海灘俱樂部", "ig": "https://www.instagram.com/labrisabali/", "place": "", "url": "https://labrisa-bali.com/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "food", "loc": "ll", "lat": -8.653616984954079, "lon": 115.12494254401467, "zone": "south", "x": 752, "y": 643, "map": "https://www.google.com/maps/search/?api=1&query=-8.653616984954079,115.12494254401467"}, {"id": "p121", "type": "food", "cat": "餐飲", "sub": "", "region": "彰古", "regionEn": "Canggu", "name": "WOODS PERERENAN", "short": "WOODS PERERENAN", "desc": "位於 Pererenan 靜謐社區的綠意植栽咖啡廳。內部設計大量運用天然木材紋理與懸掛綠植，宛如豪華的樹屋秘境。主打使用當地優質新鮮食材製作的精緻早午餐、糕點與健康餐點，為旅客提供放鬆心靈的寧靜空間。", "rules": "", "ig": "https://www.instagram.com/woodsbali/", "place": "", "url": "https://woodsbali.com/?utm_source=gmb-web&utm_medium=organic", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "food", "loc": "ll", "lat": -8.645343720177683, "lon": 115.1282041328754, "zone": "south", "x": 754, "y": 636, "map": "https://www.google.com/maps/search/?api=1&query=-8.645343720177683,115.1282041328754"}, {"id": "p122", "type": "food", "cat": "餐飲", "sub": "", "region": "金巴蘭", "regionEn": "Jimbaran", "name": "烤豬飯 Rumah Makan", "short": "烤豬飯 Rumah Makan", "desc": "當地非常著名且深受在地人與遊客喜愛的傳統巴利島烤豬飯名店，以酥脆入味的豬皮、香料豐富的嫩豬肉與道地的印尼風味辣醬聞名。", "rules": "", "ig": "https://www.instagram.com/babi_guling_karya_rebo", "place": "Rumah Makan Babi Guling Karya Rebo", "url": "https://www.instagram.com/babi_guling_karya_rebo", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "food", "loc": "ll", "lat": -8.759153857346401, "lon": 115.17641468710184, "zone": "south", "x": 798, "y": 815, "map": "https://www.google.com/maps/search/?api=1&query=-8.759153857346401,115.17641468710184"}, {"id": "p123", "type": "food", "cat": "餐飲", "sub": "", "region": "金巴蘭", "regionEn": "Jimbaran", "name": "Cuca Restaurant", "short": "Cuca Restaurant", "desc": "金巴蘭極具人氣與口碑的休閒高級餐飲（Casual Fine Dining）餐廳。由國際知名主廚主理，主打將峇里島當令在地食材結合全球靈感的創意分享式小碟料理（Tapas）、特色調酒與甜點。餐廳被綠意盎然的大樹與花園環繞，兼具精緻美味與輕鬆愜意的度假氛圍。", "rules": "國際級休閒高級 Tapas 創意料理", "ig": "https://www.instagram.com/cucabali", "place": "", "url": "https://www.cucabali.com/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "food", "loc": "ll", "lat": -8.769217784552534, "lon": 115.16976192383615, "zone": "south", "x": 788, "y": 831, "map": "https://www.google.com/maps/search/?api=1&query=-8.769217784552534,115.16976192383615"}, {"id": "p124", "type": "food", "cat": "餐飲", "sub": "", "region": "金巴蘭", "regionEn": "Jimbaran", "name": "Jimbaran Beach", "short": "Jimbaran Beach", "desc": "", "rules": "", "ig": "", "place": "", "url": "", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "food", "loc": "ll", "lat": -8.776109319831512, "lon": 115.16627006119757, "zone": "south", "x": 781, "y": 840, "map": "https://www.google.com/maps/search/?api=1&query=-8.776109319831512,115.16627006119757"}, {"id": "p125", "type": "food", "cat": "餐飲", "sub": "", "region": "金巴蘭", "regionEn": "Jimbaran", "name": "Rock Bar", "short": "Rock Bar", "desc": "位於AYANA內的傳奇懸崖岩石日落酒吧", "rules": "", "ig": "https://www.instagram.com/rockbarbali/", "place": "", "url": "https://drive.google.com/file/d/1g2vci22L2AGMVAjurKFZt19Wu7TpTqJz/view?usp=drive_link", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "food", "loc": "ll", "lat": -8.780548951249116, "lon": 115.13786657581377, "zone": "south", "x": 751, "y": 847, "map": "https://www.google.com/maps/search/?api=1&query=-8.780548951249116,115.13786657581377"}, {"id": "p126", "type": "food", "cat": "餐飲", "sub": "", "region": "金巴蘭", "regionEn": "Jimbaran", "name": "琉璃宮海鮮餐廳 (Liu Li Palace Seafood Restaurant)", "short": "琉璃宮海鮮餐廳 (Liu Li Palace Seaf…", "desc": "位於RIMBA內中式料理餐廳", "rules": "", "ig": "https://www.instagram.com/liulipalacebali/", "place": "Liu Li Palace Seafood Restaurant", "url": "https://www.ayana.com/zh-hant/bali/dining/liu-li-bali/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "food", "loc": "ll", "lat": -8.79152109526752, "lon": 115.14003736272888, "zone": "south", "x": 753, "y": 857, "map": "https://www.google.com/maps/search/?api=1&query=-8.79152109526752,115.14003736272888"}, {"id": "p127", "type": "food", "cat": "餐飲", "sub": "", "region": "金巴蘭", "regionEn": "Jimbaran", "name": "nyonyasecretresto", "short": "nyonyasecretresto", "desc": "娘惹私房菜", "rules": "", "ig": "https://www.instagram.com/nyonyassecretresto?igsh=amxxZmdlcXNkcnF0", "place": "NYONYA'S SECRET", "url": "http://nyonyasecretresto.com/id", "ticket": "", "usd": "$10.00", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "food", "loc": "ll", "lat": -8.783447835272987, "lon": 115.17812935767128, "zone": "south", "x": 793, "y": 851, "map": "https://www.google.com/maps/search/?api=1&query=-8.783447835272987,115.17812935767128"}, {"id": "p128", "type": "food", "cat": "餐飲", "sub": "", "region": "金巴蘭", "regionEn": "Jimbaran", "name": "The Cuisine Bali", "short": "The Cuisine Bali", "desc": "金巴蘭海鮮餐廳業者", "rules": "", "ig": "https://www.instagram.com/thecuisine_bali", "place": "", "url": "http://cuisinejimbaranseafood.com/", "ticket": "", "usd": "$10.00", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "food", "loc": "ll", "lat": -8.762093029395471, "lon": 115.16998656288204, "zone": "south", "x": 790, "y": 820, "map": "https://www.google.com/maps/search/?api=1&query=-8.762093029395471,115.16998656288204"}, {"id": "p129", "type": "food", "cat": "餐飲", "sub": "", "region": "金塔瑪尼", "regionEn": "Kintamani", "name": "Paperhills", "short": "Paperhills", "desc": "位於金塔瑪尼火山高地的超人氣絕景網紅咖啡廳。擁有極佳的視野，能俯瞰壯麗的巴杜爾火山與湖景，並以簡約清新的清水模與無邊際水池造景聞名，是欣賞山景雲海的熱門打卡點。", "rules": "網美打卡與建築美學地標", "ig": "https://www.instagram.com/paperhills.id/", "place": "", "url": "https://www.instagram.com/paperhills.id/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "food", "loc": "ll", "lat": -8.268910845439267, "lon": 115.34330073571054, "zone": "far", "x": 994, "y": 371, "map": "https://www.google.com/maps/search/?api=1&query=-8.268910845439267,115.34330073571054"}, {"id": "p130", "type": "food", "cat": "餐飲", "sub": "", "region": "金塔瑪尼", "regionEn": "Kintamani", "name": "Akasa Kintamani", "short": "Akasa Kintamani", "desc": "金塔瑪尼山區極具特色的高空景觀咖啡廳，擁有獨特的木質三層樓建築設計，提供全景視野讓旅客一邊享用精品咖啡與精緻餐點，一邊飽覽壯闊的火山與山谷風光。", "rules": "網美打卡與建築美學地標", "ig": "https://www.instagram.com/akasa_specialtycoffee/", "place": "AKASA", "url": "https://akasacoffee.com/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "food", "loc": "ll", "lat": -8.27957984046301, "lon": 115.35756972883487, "zone": "far", "x": 1003, "y": 376, "map": "https://www.google.com/maps/search/?api=1&query=-8.27957984046301,115.35756972883487"}, {"id": "p131", "type": "food", "cat": "餐飲", "sub": "", "region": "金塔瑪尼", "regionEn": "Kintamani", "name": "Grand Puncak Sari Restaurant", "short": "Grand Puncak Sari Restaurant", "desc": "在金塔瑪尼的景觀餐廳", "rules": "", "ig": "https://www.instagram.com/grandpuncaksari/", "place": "", "url": "https://www.instagram.com/grandpuncaksari/", "ticket": "", "usd": "$11.00", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "food", "loc": "ll", "lat": -8.26928682987386, "lon": 115.3481303994231, "zone": "far", "x": 998, "y": 371, "map": "https://www.google.com/maps/search/?api=1&query=-8.26928682987386,115.3481303994231"}, {"id": "p132", "type": "food", "cat": "餐飲", "sub": "", "region": "庫塔", "regionEn": "Kuta", "name": "Dewi Sri Food Center 大排檔", "short": "Dewi Sri Food Center 大排檔", "desc": "", "rules": "", "ig": "", "place": "Dewi Sri Food Center", "url": "https://www.facebook.com/dewisrifoodcenter", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "food", "loc": "ll", "lat": -8.706333837482779, "lon": 115.18157432877142, "zone": "south", "x": 819, "y": 710, "map": "https://www.google.com/maps/search/?api=1&query=-8.706333837482779,115.18157432877142"}, {"id": "p133", "type": "food", "cat": "餐飲", "sub": "", "region": "庫塔", "regionEn": "Kuta", "name": "Jamie Oliver Kitchen | Kuta Beach", "short": "Jamie Oliver Kitchen", "desc": "", "rules": "", "ig": "https://www.instagram.com/jamieoliverkitchenid/", "place": "", "url": "http://www.jamieoliverkitchen-id.com/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "food", "loc": "ll", "lat": -8.719985989417214, "lon": 115.17171483458172, "zone": "south", "x": 805, "y": 737, "map": "https://www.google.com/maps/search/?api=1&query=-8.719985989417214,115.17171483458172"}, {"id": "p134", "type": "food", "cat": "餐飲", "sub": "", "region": "庫塔", "regionEn": "Kuta", "name": "FORK Bali", "short": "FORK Bali", "desc": "", "rules": "", "ig": "https://www.instagram.com/rollingforkbali/", "place": "", "url": "https://drive.google.com/drive/folders/1sZLBRUxMOzmoNhFu6Gw2H86TuV_qLF-1?usp=sharing", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "food", "loc": "ll", "lat": -8.70857502266932, "lon": 115.16755199105704, "zone": "south", "x": 809, "y": 710, "map": "https://www.google.com/maps/search/?api=1&query=-8.70857502266932,115.16755199105704"}, {"id": "p135", "type": "food", "cat": "餐飲", "sub": "", "region": "庫塔", "regionEn": "Kuta", "name": "Amanaia 水上餐廳", "short": "Amanaia 水上餐廳", "desc": "", "rules": "", "ig": "https://www.instagram.com/dapoertepiair", "place": "Dapoer Tepi Air by Amanaia", "url": "https://linktr.ee/dapoertepiair", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "food", "loc": "ll", "lat": -8.735468704214204, "lon": 115.175019260133, "zone": "south", "x": 810, "y": 745, "map": "https://www.google.com/maps/search/?api=1&query=-8.735468704214204,115.175019260133"}, {"id": "p136", "type": "food", "cat": "餐飲", "sub": "", "region": "庫塔", "regionEn": "Kuta", "name": "Padang Restaurant Payakumbuah, Bali", "short": "Padang Restaurant Payakumbu…", "desc": "巴東菜連鎖店", "rules": "", "ig": "https://www.instagram.com/padangpayakumbuah/", "place": "", "url": "", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "food", "loc": "ll", "lat": -8.725756861694338, "lon": 115.1807418442072, "zone": "south", "x": 815, "y": 737, "map": "https://www.google.com/maps/search/?api=1&query=-8.725756861694338,115.1807418442072"}, {"id": "p137", "type": "food", "cat": "餐飲", "sub": "", "region": "佩妮達島", "regionEn": "Penida", "name": "AMARTA Penida", "short": "AMARTA Penida", "desc": "白色天空之門", "rules": "", "ig": "https://www.instagram.com/amarta_penida/", "place": "", "url": "https://amartapenida.durable.site/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "food", "loc": "ll", "lat": -8.684329915706819, "lon": 115.4756854094154, "zone": "isle", "x": 1027, "y": 788, "map": "https://www.google.com/maps/search/?api=1&query=-8.684329915706819,115.4756854094154"}, {"id": "p138", "type": "food", "cat": "餐飲", "sub": "", "region": "佩妮達島", "regionEn": "Penida", "name": "The Chill Penida", "short": "The Chill Penida", "desc": "", "rules": "海邊泳池俱樂部", "ig": "https://www.instagram.com/thechillpenida/", "place": "", "url": "http://thechillpenida.com/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "food", "loc": "ll", "lat": -8.682375367843141, "lon": 115.57610892716137, "zone": "isle", "x": 1122, "y": 781, "map": "https://www.google.com/maps/search/?api=1&query=-8.682375367843141,115.57610892716137"}, {"id": "p139", "type": "food", "cat": "餐飲", "sub": "", "region": "水明漾", "regionEn": "Seminyak", "name": "Bo & Bun", "short": "Bo & Bun", "desc": "東南亞創意料理", "rules": "", "ig": "https://www.instagram.com/boandbun/", "place": "", "url": "http://eatcompany.co/boandbun", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "food", "loc": "ll", "lat": -8.684575508245596, "lon": 115.16890725519775, "zone": "south", "x": 806, "y": 672, "map": "https://www.google.com/maps/search/?api=1&query=-8.684575508245596,115.16890725519775"}, {"id": "p140", "type": "food", "cat": "餐飲", "sub": "", "region": "水明漾", "regionEn": "Seminyak", "name": "Kilo Kitchen Bali - Seminyak", "short": "Kilo Kitchen Bali", "desc": "水明漾備受好評的質感融合料理餐廳，主打將亞洲與拉丁美洲風味巧妙結合的獨特菜色。空間設計走低調簡約的工業風與溫馨氛圍，提供細緻的單點與分享美食。", "rules": "", "ig": "https://www.instagram.com/kilobali/", "place": "", "url": "http://kiloseminyak.com/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "food", "loc": "ll", "lat": -8.683896734821733, "lon": 115.16547402803639, "zone": "south", "x": 802, "y": 670, "map": "https://www.google.com/maps/search/?api=1&query=-8.683896734821733,115.16547402803639"}, {"id": "p141", "type": "food", "cat": "餐飲", "sub": "", "region": "水明漾", "regionEn": "Seminyak", "name": "La Favela", "short": "La Favela", "desc": "水明漾極具傳奇色彩的雨林復古風主題餐廳與酒吧。內部裝潢佈滿古董、綠意植栽、復古老車與藝術裝飾，宛如南美洲熱帶雨林中的神祕聚落，入夜後氣氛熱鬧非凡，是體驗峇里島夜生活的指標去處。", "rules": "CLUB性質", "ig": "https://www.instagram.com/lafavelabali_/", "place": "", "url": "https://lafavelabali.com/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "food", "loc": "ll", "lat": -8.680842239216938, "lon": 115.1637574144557, "zone": "south", "x": 800, "y": 667, "map": "https://www.google.com/maps/search/?api=1&query=-8.680842239216938,115.1637574144557"}, {"id": "p142", "type": "food", "cat": "餐飲", "sub": "", "region": "水明漾", "regionEn": "Seminyak", "name": "Mano Beach House", "short": "Mano Beach House", "desc": "坐落在沙灘旁的餐酒館", "rules": "酒吧性質", "ig": "https://www.instagram.com/manobeachhouse/", "place": "", "url": "https://www.manobali.com/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "food", "loc": "ll", "lat": -8.679654373100272, "lon": 115.15483102383618, "zone": "south", "x": 791, "y": 666, "map": "https://www.google.com/maps/search/?api=1&query=-8.679654373100272,115.15483102383618"}, {"id": "p143", "type": "food", "cat": "餐飲", "sub": "", "region": "水明漾", "regionEn": "Seminyak", "name": "夜市 Open Night Market", "short": "夜市 Open Night Market", "desc": "", "rules": "", "ig": "", "place": "Open Night Market", "url": "", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "food", "loc": "ll", "lat": -8.669642209353643, "lon": 115.1637574144557, "zone": "south", "x": 800, "y": 658, "map": "https://www.google.com/maps/search/?api=1&query=-8.669642209353643,115.1637574144557"}, {"id": "p144", "type": "food", "cat": "餐飲", "sub": "", "region": "水明漾", "regionEn": "Seminyak", "name": "Nook", "short": "Nook", "desc": "田園間景色餐廳", "rules": "沉浸於綠意田園間的景觀餐廳", "ig": "", "place": "", "url": "https://www.facebook.com/Nookbali/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "food", "loc": "ll", "lat": -8.666417896427735, "lon": 115.1611824940847, "zone": "south", "x": 799, "y": 655, "map": "https://www.google.com/maps/search/?api=1&query=-8.666417896427735,115.1611824940847"}, {"id": "p145", "type": "food", "cat": "餐飲", "sub": "", "region": "蘇卡瓦提區", "regionEn": "Sukawati", "name": "Tlaga Singha Bali", "short": "Tlaga Singha Bali", "desc": "", "rules": "泳池俱樂部", "ig": "https://www.instagram.com/tlagasingha/", "place": "", "url": "http://tlagasinghabali.com/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "food", "loc": "ll", "lat": -8.587237929310971, "lon": 115.27941846594327, "zone": "mid", "x": 877, "y": 607, "map": "https://www.google.com/maps/search/?api=1&query=-8.587237929310971,115.27941846594327"}, {"id": "p146", "type": "food", "cat": "餐飲", "sub": "", "region": "塔巴南", "regionEn": "Tabanan", "name": "Mentari Restoran", "short": "Mentari Restoran", "desc": "百度庫 / 餐廳", "rules": "百度庫景觀餐廳", "ig": "", "place": "Mentari Restoran ᬫᭂᬦ᭄ᬢᬭᬶᬭᬾᬲ᭄ᬢᭀᬭᬦ᭄", "url": "", "ticket": "", "usd": "$8.00", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "food", "loc": "ll", "lat": -8.278584109205, "lon": 115.16532055609724, "zone": "far", "x": 803, "y": 360, "map": "https://www.google.com/maps/search/?api=1&query=-8.278584109205,115.16532055609724"}, {"id": "p147", "type": "food", "cat": "餐飲", "sub": "", "region": "塔巴南", "regionEn": "Tabanan", "name": "Kurnia Seafood Bali", "short": "Kurnia Seafood Bali", "desc": "海神廟旁印尼式料理", "rules": "", "ig": "https://www.instagram.com/kurniaseafoodbali/", "place": "", "url": "", "ticket": "", "usd": "$10.00", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "food", "loc": "ll", "lat": -8.606636743685979, "lon": 115.1091966134931, "zone": "south", "x": 717, "y": 585, "map": "https://www.google.com/maps/search/?api=1&query=-8.606636743685979,115.1091966134931"}, {"id": "p148", "type": "food", "cat": "餐飲", "sub": "", "region": "烏布", "regionEn": "Ubud", "name": "Batubara Wood Fire", "short": "Batubara Wood Fire", "desc": "以牛排盛名的餐廳", "rules": "頂級牛排直火餐廳", "ig": "https://www.instagram.com/batubarawoodfire/", "place": "", "url": "https://www.batubarawoodfire.com/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "food", "loc": "ll", "lat": -8.522397195467658, "lon": 115.26340034728734, "zone": "mid", "x": 853, "y": 586, "map": "https://www.google.com/maps/search/?api=1&query=-8.522397195467658,115.26340034728734"}, {"id": "p149", "type": "food", "cat": "餐飲", "sub": "", "region": "烏布", "regionEn": "Ubud", "name": "Pison Ubud", "short": "Pison Ubud", "desc": "烏布極受歡迎的時尚文青咖啡廳與餐館。結合了出色的精品咖啡、豐富的早午餐與融合西式與亞洲風味的創意正餐，常伴隨現場音樂表演，擁有舒適愜意的藝術人文氛圍。", "rules": "", "ig": "https://www.instagram.com/pison.ubud/", "place": "", "url": "https://www.instagram.com/pison.bali/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "food", "loc": "ll", "lat": -8.516395318132602, "lon": 115.26366421519074, "zone": "mid", "x": 852, "y": 582, "map": "https://www.google.com/maps/search/?api=1&query=-8.516395318132602,115.26366421519074"}, {"id": "p150", "type": "food", "cat": "餐飲", "sub": "", "region": "烏布", "regionEn": "Ubud", "name": "Sangam Bali", "short": "Sangam Bali", "desc": "小編覺得峇里島最好吃的髒鴨餐，用餐環境舒適，服務也很到位", "rules": "", "ig": "https://www.instagram.com/sangambali/", "place": "Sangam Bali - Asian Restaurant and Events", "url": "http://www.sangambali.com/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "food", "loc": "ll", "lat": -8.569445178144173, "lon": 115.28601965582561, "zone": "mid", "x": 883, "y": 594, "map": "https://www.google.com/maps/search/?api=1&query=-8.569445178144173,115.28601965582561"}, {"id": "p151", "type": "food", "cat": "餐飲", "sub": "", "region": "烏布", "regionEn": "Ubud", "name": "Bagel it !", "short": "Bagel it !", "desc": "烏布專門提供手工貝果與多樣化創意夾心輕食的特色小店，以Q彈扎實的貝果口感與豐富健康的內餡選擇受到喜愛。", "rules": "", "ig": "https://www.instagram.com/bagelit.id", "place": "", "url": "https://linktr.ee/bagelit.id", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "food", "loc": "ll", "lat": -8.50736052737459, "lon": 115.26840277539432, "zone": "mid", "x": 855, "y": 575, "map": "https://www.google.com/maps/search/?api=1&query=-8.50736052737459,115.26840277539432"}, {"id": "p152", "type": "food", "cat": "餐飲", "sub": "", "region": "烏布", "regionEn": "Ubud", "name": "Taman Dedari", "short": "Taman Dedari", "desc": "天使雕像庭園大型景觀餐廳", "rules": "", "ig": "https://www.instagram.com/tamandedari/", "place": "", "url": "http://www.tamandedari.com/", "ticket": "", "usd": "$5.00", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "food", "loc": "ll", "lat": -8.474961226069787, "lon": 115.24519019092784, "zone": "mid", "x": 822, "y": 547, "map": "https://www.google.com/maps/search/?api=1&query=-8.474961226069787,115.24519019092784"}, {"id": "p153", "type": "food", "cat": "餐飲", "sub": "", "region": "烏魯瓦圖", "regionEn": "Uluwatu", "name": "MALINI", "short": "MALINI", "desc": "懸崖餐廳", "rules": "不可指定位置，小心被猴子搶", "ig": "https://www.instagram.com/maliniuluwatubali/", "place": "Heart viewpoint", "url": "(8) Instagram", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "food", "loc": "ll", "lat": -8.83209325720234, "lon": 115.08666937619662, "zone": "south", "x": 716, "y": 901, "map": "https://www.google.com/maps/search/?api=1&query=-8.83209325720234,115.08666937619662"}, {"id": "p154", "type": "food", "cat": "餐飲", "sub": "", "region": "烏魯瓦圖", "regionEn": "Uluwatu", "name": "ONE EIGHTY DAY CLUB", "short": "ONE EIGHTY DAY CLUB", "desc": "是一座頂級的奢華泳池俱樂部，擁有懸掛在懸崖邊緣、底部為透明玻璃的無邊際泳池，視覺效果極具震撼力。", "rules": "入場費700000印尼盾，可以抵個人低消600000", "ig": "https://www.instagram.com/oneeightybali/", "place": "oneeighty Dayclub", "url": "https://www.oneeightybali.com/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "food", "loc": "ll", "lat": -8.84603207267273, "lon": 115.12512152037104, "zone": "south", "x": 742, "y": 909, "map": "https://www.google.com/maps/search/?api=1&query=-8.84603207267273,115.12512152037104"}, {"id": "p155", "type": "food", "cat": "餐飲", "sub": "", "region": "烏魯瓦圖", "regionEn": "Uluwatu", "name": "Ula Cafe", "short": "Ula Cafe", "desc": "風格清新、深受旅客喜愛的舒適咖啡廳。店內提供多樣化的早午餐、咖啡與輕食選擇，是用餐與放鬆身心的好去處。", "rules": "時尚文青咖啡與音樂氛圍", "ig": "https://www.instagram.com/ula_bali/", "place": "", "url": "http://ulabali.com/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "cafe", "loc": "ll", "lat": -8.811932788187853, "lon": 115.15142782310116, "zone": "south", "x": 766, "y": 875, "map": "https://www.google.com/maps/search/?api=1&query=-8.811932788187853,115.15142782310116"}, {"id": "p156", "type": "food", "cat": "餐飲", "sub": "", "region": "烏魯瓦圖", "regionEn": "Uluwatu", "name": "Rolling Fork Padang Padang", "short": "Rolling Fork Padang Padang", "desc": "充滿復古風情與森林景致的特色義大利餐廳。主打手工義大利麵、窯烤披薩及多款經典西式料理，環境溫馨且充滿綠意。", "rules": "", "ig": "https://www.instagram.com/rollingforkbali/", "place": "", "url": "http://www.rollingforkbali.com/", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "food", "loc": "ll", "lat": -8.815583560795364, "lon": 115.11385642149106, "zone": "south", "x": 726, "y": 881, "map": "https://www.google.com/maps/search/?api=1&query=-8.815583560795364,115.11385642149106"}, {"id": "p157", "type": "food", "cat": "餐飲", "sub": "", "region": "烏魯瓦圖", "regionEn": "Uluwatu", "name": "Pandawa Seaview", "short": "Pandawa Seaview", "desc": "坐落於班達瓦海灘（Pandawa Beach）一帶，擁有開闊的海景視野。旅客在此可以一邊享用美食，一邊眺望蔚藍的海水與海岸線風光。", "rules": "", "ig": "https://www.instagram.com/pandawaseaview/", "place": "", "url": "", "ticket": "", "usd": "", "idr": "", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "food", "loc": "ll", "lat": -8.842501435704632, "lon": 115.18550904660484, "zone": "south", "x": 804, "y": 899, "map": "https://www.google.com/maps/search/?api=1&query=-8.842501435704632,115.18550904660484"}, {"id": "p158", "type": "food", "cat": "餐飲", "sub": "", "region": "烏魯瓦圖", "regionEn": "Uluwatu", "name": "teja Uluwatu", "short": "teja Uluwatu", "desc": "是一間以絕佳賞景視野聞名的景觀餐廳。餐廳的整體景色與氛圍表現非常出色，餐點水準平穩，特別推薦在傍晚夕陽時段前往，能欣賞到美麗的落日餘暉。", "rules": "", "ig": "https://www.instagram.com/teja_uluwatu/", "place": "Teja Uluwatu", "url": "https://www.tejauluwatu.com/", "ticket": "", "usd": "", "idr": "Rp250,000", "twd": "", "klook": "", "kkday": "", "review": "", "icon": "food", "loc": "ll", "lat": -8.815757748928634, "lon": 115.09064990521078, "zone": "south", "x": 715, "y": 884, "map": "https://www.google.com/maps/search/?api=1&query=-8.815757748928634,115.09064990521078"}];
+const ISLAND = [[80, 172], [164, 170], [210, 210], [294, 231], [392, 241], [490, 246], [560, 246], [609, 241], [658, 210], [707, 172], [770, 133], [812, 125], [882, 144], [952, 178], [1029, 214], [1106, 241], [1176, 280], [1246, 343], [1295, 399], [1315, 448], [1295, 483], [1232, 522], [1190, 567], [1120, 602], [1029, 648], [959, 690], [903, 728], [875, 760], [858, 791], [882, 840], [872, 892], [826, 934], [749, 941], [682, 917], [672, 872], [714, 833], [763, 819], [780, 791], [788, 752], [766, 721], [742, 679], [700, 637], [672, 602], [616, 560], [553, 522], [483, 493], [392, 477], [301, 469], [224, 448], [161, 392], [122, 329], [94, 270], [84, 224]];
+const ZONEPOLY = [{"key": "far", "pts": [[491, 239], [1060, 273], [1041, 420], [828, 454], [827, 610], [518, 583]]}, {"key": "mid", "pts": [[828, 454], [1041, 420], [970, 734], [826, 656]]}, {"key": "south", "pts": [[419, 583], [818, 619], [840, 663], [1049, 742], [1091, 1251], [423, 1246]]}];
+/* 車程分區（以南部機場一帶為起點）：顏色可自行調整 */
+const ZDEF = {
+  south:{name:'南部', c:'#8FDDA0', d:'#1E9E5A', note:'庫塔・水明漾・彰古・金巴蘭・烏魯瓦圖・努沙杜瓦・沙努爾'},
+  mid:  {name:'中部', c:'#CDB6F5', d:'#8E5BD6', note:'烏布・吉安雅・蘇卡瓦提'},
+  far:  {name:'偏遠', c:'#FFD58F', d:'#F08A24', note:'金塔瑪尼・布拉坦湖一帶'},
+  long: {name:'長途', c:'#FFB5C4', d:'#E8506E', note:'東部・北部・卡朗阿森'},
+  isle: {name:'離島', c:'#9FD6F7', d:'#2F8FD8', note:'佩妮達・藍夢・金銀島'}
+};
+const zoneOff = new Set();
+
+const GROUPS = [
+  {key:'spot', name:'景點'}, {key:'hotel', name:'住宿'}, {key:'food', name:'餐飲'},
+  {key:'act', name:'活動'}, {key:'club', name:'CLUB'}, {key:'shop', name:'商場'}, {key:'spa', name:'SPA'}, {key:'other', name:'其他'}
+];
+const GNAME = Object.fromEntries(GROUPS.map(g => [g.key, g.name]));
+const ALWAYS = ['spot', 'hotel', 'food'];   // 沒有資料也先顯示的類型
+
+/* 地區標籤位置（可自行調整） */
+const REGIONS = [
+  {zh:'烏布', en:'Ubud', x:845, y:640, a:'start'},
+  {zh:'吉安雅', en:'Gianyar', x:1000, y:612, a:'start'},
+  {zh:'彰古', en:'Canggu', x:655, y:670, a:'end'},
+  {zh:'塔巴南', en:'Tabanan', x:595, y:588, a:'end'},
+  {zh:'金巴蘭', en:'Jimbaran', x:702, y:828, a:'end'},
+  {zh:'烏魯瓦圖', en:'Uluwatu', x:664, y:948, a:'end'},
+  {zh:'努沙杜瓦', en:'Nusa Dua', x:896, y:862, a:'start', stack:true},
+  {zh:'佩妮達島', en:'Nusa Penida', x:1090, y:945, a:'middle'},
+  {zh:'藍夢島', en:'Lembongan', x:990, y:714, a:'middle'},
+  {zh:'水明漾', en:'Seminyak', x:735, y:708, a:'end'},
+  {zh:'庫塔', en:'Kuta', x:766, y:772, a:'end'},
+  {zh:'登帕薩', en:'Denpasar', x:886, y:676, a:'start'}
+];
+/* 資料裡出現、但上面沒有標籤的地區，依地點中心自動補上 */
+(function(){
+  const skip = ['潘達瓦','蘇卡瓦提區','金銀島','東部地區','昆布'];
+  const have = new Set(REGIONS.map(r => r.zh)), seen = {};
+  PLACES.forEach(p => { if(have.has(p.region) || skip.includes(p.region)) return; (seen[p.region] = seen[p.region] || {en:p.regionEn, xs:[], ys:[]}); seen[p.region].xs.push(p.x); seen[p.region].ys.push(p.y); });
+  Object.keys(seen).forEach(z => { const s = seen[z], n = s.xs.length; REGIONS.push({zh:z, en:s.en, x:s.xs.reduce((a,c)=>a+c,0)/n, y:s.ys.reduce((a,c)=>a+c,0)/n - 34, a:'middle'}); });
+})();
+
+/* ===== 圖示造型（以 0,0 為中心，約 ±13） ===== */
+const SYM = {
+  swing:'<path d="M-10 -12 H10" stroke="#fff" stroke-width="3" stroke-linecap="round"/><path d="M-6 -12 V5 M6 -12 V5" stroke="#fff" stroke-width="1.8"/><rect x="-9" y="5" width="18" height="4" rx="2" fill="#fff"/>',
+  atv:'<rect x="-10" y="-4" width="20" height="8" rx="3.5" fill="#fff"/><circle cx="-8" cy="7" r="4.6" fill="#fff" stroke="var(--pin)" stroke-width="1.6"/><circle cx="8" cy="7" r="4.6" fill="#fff" stroke="var(--pin)" stroke-width="1.6"/><path d="M-4 -4 V-10 M-8 -10 H0" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>',
+  raft:'<path d="M-13 0 H13 Q9 11 0 11 Q-9 11 -13 0Z" fill="#fff"/><path d="M7 -12 L-3 4" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/><ellipse cx="-4" cy="5" rx="2.4" ry="4.5" transform="rotate(35 -4 5)" fill="#fff"/>',
+  spa:'<path d="M0 -12 Q8 -4 0 6 Q-8 -4 0 -12Z" fill="#fff"/><path d="M-12 -2 Q-3 -3 0 6 Q-9 6 -12 -2Z" fill="#fff"/><path d="M12 -2 Q3 -3 0 6 Q9 6 12 -2Z" fill="#fff"/><path d="M-9 10 H9" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>',
+  museum:'<path d="M-12 -3 L0 -12 L12 -3Z" fill="#fff"/><rect x="-9" y="-1" width="4" height="9" rx="1" fill="#fff"/><rect x="-2" y="-1" width="4" height="9" rx="1" fill="#fff"/><rect x="5" y="-1" width="4" height="9" rx="1" fill="#fff"/><rect x="-12" y="9" width="24" height="3" rx="1.5" fill="#fff"/>',
+  gym:'<path d="M-8 0 H8" stroke="#fff" stroke-width="2.8"/><rect x="-13" y="-5" width="3.5" height="10" rx="1.5" fill="#fff"/><rect x="-9" y="-8" width="3.5" height="16" rx="1.5" fill="#fff"/><rect x="9.5" y="-5" width="3.5" height="10" rx="1.5" fill="#fff"/><rect x="5.5" y="-8" width="3.5" height="16" rx="1.5" fill="#fff"/>',
+  glider:'<path d="M-13 -4 Q0 -17 13 -4 Q6 -7 0 -6 Q-6 -7 -13 -4Z" fill="#fff"/><path d="M-9 -4 L0 7 M9 -4 L0 7" stroke="#fff" stroke-width="1.5"/><circle cy="9.5" r="3" fill="#fff"/>',
+  club:'<path d="M-11 -10 H11 L0 3Z" fill="#fff"/><path d="M0 3 V10" stroke="#fff" stroke-width="2.6"/><path d="M-6 11.5 H6" stroke="#fff" stroke-width="2.8" stroke-linecap="round"/><path d="M4 -4 L9 -13" stroke="#fff" stroke-width="2" stroke-linecap="round"/>',
+  palm:'<path d="M-1 11 Q-3 1 3 -6" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M3 -6 Q-5 -14 -12 -6 Q-5 -9 3 -6Z M3 -6 Q10 -15 14 -5 Q8 -9 3 -6Z M3 -6 Q3 -16 -3 -14 Q1 -11 3 -6Z" fill="#fff"/>',
+  house:'<path d="M-13 0 L0 -12 L13 0 V11 H-13Z" fill="#fff"/><rect x="-3.5" y="2" width="7" height="9" rx="1.5" class="cut"/>',
+  bed:'<rect x="-13" y="-1" width="26" height="9" rx="2.5" fill="#fff"/><rect x="-13" y="-10" width="4" height="21" rx="2" fill="#fff"/><rect x="-6" y="-6" width="9" height="5" rx="2.5" fill="#fff"/>',
+  food:'<path d="M-9 -12 V-3 Q-9 0 -6 0 Q-3 0 -3 -3 V-12 M-6 -12 V12" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round"/><path d="M7 12 V-12 Q12 -8 11 1 H7" fill="#fff" stroke="#fff" stroke-width="2" stroke-linejoin="round"/>',
+  cafe:'<path d="M-9 -4 H7 V4 Q7 11 -1 11 Q-9 11 -9 4Z" fill="#fff"/><path d="M7 -1 H10 Q13 -1 13 3 Q13 6 8 6" stroke="#fff" stroke-width="2.2" fill="none"/><path d="M-5 -8 Q-3 -11 -5 -14 M1 -8 Q3 -11 1 -14" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/>',
+  temple:'<path d="M-12 12 V2 L-9 -2 L-9 -8 L-5 -12 V12Z M12 12 V2 L9 -2 L9 -8 L5 -12 V12Z" fill="#fff"/>',
+  beach:'<circle cx="5" cy="-6" r="5" fill="#fff"/><path d="M-12 4 q3 -4 6 0 t6 0 t6 0 t6 0 M-12 10 q3 -4 6 0 t6 0 t6 0 t6 0" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round"/>',
+  fall:'<path d="M-12 -10 H12" stroke="#fff" stroke-width="3" stroke-linecap="round"/><path d="M-6 -7 V9 M0 -7 V12 M6 -7 V7" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/>',
+  terrace:'<path d="M-12 -4 Q0 -10 12 -4 M-10 2 Q0 -3 10 2 M-8 8 Q0 4 8 8" stroke="#fff" stroke-width="2.8" fill="none" stroke-linecap="round"/>',
+  bag:'<path d="M-10 -6 H10 L12 11 H-12Z" fill="#fff"/><path d="M-5 -6 V-9 Q-5 -13 0 -13 Q5 -13 5 -9 V-6" stroke="#fff" stroke-width="2.2" fill="none"/>',
+  volcano:'<path d="M-13 11 L-4 -8 H4 L13 11Z" fill="#fff"/><path d="M-3 -11 Q-5 -15 -1 -14 M3 -11 Q5 -15 1 -14" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/>',
+  star:'<path d="M0 -12 L3.5 -4 L12 -3 L5.5 3 L7.5 11.5 L0 7 L-7.5 11.5 L-5.5 3 L-12 -3 L-3.5 -4Z" fill="#fff"/>'
+};
+
+/* ===== 位置調整（只存在這個瀏覽器，要寫進地圖請用「複製位置」） ===== */
+const POSKEY = 'bali-map-positions-v1';
+const posKey = p => p.name + '|' + p.region;
+PLACES.forEach(p => { p.ox = p.x; p.oy = p.y; });
+try{
+  const saved = JSON.parse(localStorage.getItem(POSKEY) || '{}');
+  PLACES.forEach(p => { const s = saved[posKey(p)]; if(s){ p.x = s[0]; p.y = s[1]; p.moved = true; } });
+}catch(err){}
+function savePositions(){
+  try{
+    const o = {}; PLACES.filter(p => p.moved).forEach(p => { o[posKey(p)] = [p.x, p.y]; });
+    localStorage.setItem(POSKEY, JSON.stringify(o));
+  }catch(err){}
+}
+
+/* ===== 小工具 ===== */
+const $ = s => document.querySelector(s);
+const svg = $('#map');
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const safeUrl = u => /^https?:\/\//i.test(u || '') ? u : '';
+const byId = Object.fromEntries(PLACES.map(p => [p.id, p]));
+const catName = p => p.cat || GNAME[p.type] || '其他';
+const f1 = n => n.toFixed(1);
+const reduceMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function smooth(pts, closed){
+  const n = pts.length;
+  const g = i => closed ? pts[(i+n)%n] : pts[Math.max(0, Math.min(n-1, i))];
+  let d = 'M'+f1(pts[0][0])+' '+f1(pts[0][1]);
+  const last = closed ? n : n-1;
+  for(let i=0;i<last;i++){
+    const p0=g(i-1), p1=g(i), p2=g(i+1), p3=g(i+2);
+    d += 'C'+f1(p1[0]+(p2[0]-p0[0])/6)+' '+f1(p1[1]+(p2[1]-p0[1])/6)+' '+f1(p2[0]-(p3[0]-p1[0])/6)+' '+f1(p2[1]-(p3[1]-p1[1])/6)+' '+f1(p2[0])+' '+f1(p2[1]);
+  }
+  return d + (closed ? 'Z' : '');
+}
+function inPoly(x, y, poly){
+  let inside = false;
+  for(let i=0, j=poly.length-1; i<poly.length; j=i++){
+    const a=poly[i], b=poly[j];
+    if((a[1]>y)!==(b[1]>y) && x < (b[0]-a[0])*(y-a[1])/(b[1]-a[1])+a[0]) inside = !inside;
+  }
+  return inside;
+}
+function segDist(px, py, a, b){
+  const dx = b[0]-a[0], dy = b[1]-a[1];
+  const t = Math.max(0, Math.min(1, ((px-a[0])*dx + (py-a[1])*dy) / ((dx*dx + dy*dy) || 1)));
+  return Math.hypot(px-(a[0]+t*dx), py-(a[1]+t*dy));
+}
+const edgeDist = (x, y, poly) => Math.min(...poly.map((p, i) => segDist(x, y, p, poly[(i+1) % poly.length])));
+function blobE(cx, cy, rx, ry, seed){
+  const rand = rng(seed);
+  return Array.from({length:10}, (_, i) => {
+    const a = i*Math.PI/5, k = 0.88+rand()*0.24;
+    return [cx+Math.cos(a)*rx*k, cy+Math.sin(a)*ry*k];
+  });
+}
+function palm(x, y, s, lean){
+  const tx = lean*1.6, ty = -26;
+  const angs = [-165,-110,-65,-15,25,155];
+  const leaves = angs.map((a, i) => '<ellipse rx="13" ry="4.6" transform="rotate('+a+') translate(11 0)" class="'+(i%2?'c-crown2':'c-crown')+'"/>').join('');
+  return '<g transform="translate('+x+' '+y+') scale('+s+')"><ellipse cy="2" rx="11" ry="3.5" fill="#000" opacity=".12"/>'
+    + '<path d="M0 0 Q'+lean+' -14 '+tx+' '+ty+'" stroke="var(--trunk)" stroke-width="4" fill="none" stroke-linecap="round"/>'
+    + '<g transform="translate('+tx+' '+ty+')">'+leaves+'<circle r="3" fill="var(--trunk)"/></g></g>';
+}
+function cloud(y, dur, del, s){
+  return '<g transform="translate(0 '+y+') scale('+s+')"><g class="cloud" style="--dur:'+dur+'s;--del:'+del+'s"><ellipse rx="48" ry="16" class="c-cloud"/><circle cx="-16" cy="-10" r="18" class="c-cloud"/><circle cx="14" cy="-15" r="23" class="c-cloud"/></g></g>';
+}
+function terrace(x, y, rot){
+  const w = [48, 40, 32, 24];
+  return '<g transform="translate('+x+' '+y+') rotate('+rot+')">'
+    + w.map((k, i) => '<path class="c-terr" d="M'+(-k)+' '+(i*11)+' Q0 '+(i*11-16)+' '+k+' '+(i*11)+'"/>').join('') + '</g>';
+}
+
+/* ===== 畫出群島 ===== */
+const ISLETS = [
+  {cx:1088, cy:822, rx:98, ry:58, seed:5},   // 佩妮達島
+  {cx:990, cy:770, rx:29, ry:22, seed:9},    // 藍夢島
+  {cx:1010, cy:800, rx:13, ry:9, seed:2}     // 珍寧岸
+];
+const LAKES = [
+  {x:1010, y:322, rx:26, ry:42, rot:25},
+  {x:735, y:308, rx:22, ry:12, rot:-10}
+];
+const TERR = [[840,430,5],[905,392,-6],[480,300,-4],[570,325,6],[300,330,0]];
+let clipN = 0;
+
+function buildMap(){
+  const isletPts = ISLETS.map(o => blobE(o.cx, o.cy, o.rx, o.ry, o.seed));
+  const shapes = [ISLAND].concat(isletPts);
+  const rand = rng(21);
+  let s = '<rect x="-400" y="-400" width="2200" height="1800" fill="var(--sea)"/>';
+
+  let w = 0;
+  for(let n=0; n<4000 && w<44; n++){
+    const x = 20+rand()*1330, y = 95+rand()*850;
+    if(shapes.some(pts => inPoly(x, y, pts) || edgeDist(x, y, pts) < 58)) continue;
+    s += '<path class="c-wave wave" style="--i:'+w+'" d="M'+f1(x)+' '+f1(y)+' q7 -7 14 0 t14 0 t14 0"/>';
+    w++;
+  }
+
+  const paths = shapes.map(pts => smooth(pts, true));
+  paths.forEach((d, i) => { s += '<path d="'+d+'" fill="var(--shallow)" stroke="var(--shallow)" stroke-width="'+(i ? 40 : 58)+'" stroke-linejoin="round"/>'; });
+  let mainClip = '';
+  paths.forEach((d, i) => {
+    const id = 'cl'+(clipN++); if(!i) mainClip = id;
+    s += '<path d="'+d+'" class="c-grass"/><clipPath id="'+id+'"><path d="'+d+'"/></clipPath>'
+      + '<path d="'+d+'" fill="none" stroke="var(--sand)" stroke-width="'+(i ? 22 : 30)+'" stroke-linejoin="round" clip-path="url(#'+id+')"/>';
+  });
+
+  /* 車程分區：圓潤的粉彩色塊＋點點花紋＋縫線邊框＋小旗子 */
+  const wavy = pts => {
+    let d = '';
+    pts.forEach((a, i) => {
+      const c = pts[(i+1) % pts.length], dx = c[0]-a[0], dy = c[1]-a[1], len = Math.hypot(dx, dy) || 1;
+      const n = Math.max(2, Math.round(len/46)), nx = -dy/len*7, ny = dx/len*7;
+      if(!i) d += 'M'+a[0]+' '+a[1];
+      for(let k = 0; k < n; k++){
+        const t1 = (k+.5)/n, t2 = (k+1)/n, sg = k % 2 ? -1 : 1;
+        d += ' Q'+f1(a[0]+dx*t1+nx*sg)+' '+f1(a[1]+dy*t1+ny*sg)+' '+f1(a[0]+dx*t2)+' '+f1(a[1]+dy*t2);
+      }
+    });
+    return d + 'Z';
+  };
+  const zflag = (k, x, y, label) => {
+    const w = label.length * 19 + 26;
+    return '<g class="zflag zf" data-z="'+k+'" style="transform:translate('+x+'px,'+y+'px) scale(calc(var(--u,1) * var(--zf,1)))"><path d="M-6 16 L0 30 L6 16Z" fill="'+ZDEF[k].d+'"/>'
+      + '<rect x="'+(-w/2)+'" y="-17" width="'+w+'" height="34" rx="17" fill="#fff" stroke="'+ZDEF[k].d+'" stroke-width="3.5"/>'
+      + '<circle cx="'+(-w/2+16)+'" cy="0" r="5" fill="'+ZDEF[k].c+'" stroke="'+ZDEF[k].d+'" stroke-width="2"/>'
+      + '<text x="'+(8)+'" y="6" text-anchor="middle" fill="'+ZDEF[k].d+'">'+label+'</text></g>';
+  };
+  s += '<defs><pattern id="zdots" width="16" height="16" patternUnits="userSpaceOnUse"><circle cx="4" cy="4" r="2.2" fill="#fff" opacity=".42"/><circle cx="12" cy="12" r="2.2" fill="#fff" opacity=".42"/></pattern></defs>';
+  s += '<g id="zonesFill"><path class="zf zf-fill" data-z="long" d="'+paths[0]+'" fill="'+ZDEF.long.c+'"/>'
+    + '<path class="zf zf-dots" data-z="long" d="'+paths[0]+'" fill="url(#zdots)"/>'
+    + ZONEPOLY.map(z => { const d = wavy(z.pts); return '<g class="zf" data-z="'+z.key+'" clip-path="url(#'+mainClip+')"><path class="zf-fill" d="'+d+'" fill="'+ZDEF[z.key].c+'"/><path class="zf-dots" d="'+d+'" fill="url(#zdots)"/><path class="zf-line" d="'+d+'"/></g>'; }).join('')
+    + paths.slice(1).map(d => '<g class="zf" data-z="isle"><path class="zf-fill" d="'+d+'" fill="'+ZDEF.isle.c+'"/><path class="zf-dots" d="'+d+'" fill="url(#zdots)"/></g>').join('') + '</g>'
+    + paths.map((d, i) => '<path d="'+d+'" fill="none" stroke="var(--sand)" stroke-width="'+(i ? 22 : 30)+'" stroke-linejoin="round" clip-path="url(#cl'+(clipN - paths.length + i)+')"/>').join('');
+  window.__zflags = zflag('south', 815, 762, '南部') + zflag('mid', 922, 571, '中部') + zflag('far', 903, 378, '偏遠') + zflag('long', 1181, 403, '長途') + zflag('long', 618, 450, '長途');
+
+  LAKES.forEach(l => {
+    s += '<g transform="rotate('+l.rot+' '+l.x+' '+l.y+')"><ellipse class="c-lake" cx="'+l.x+'" cy="'+l.y+'" rx="'+l.rx+'" ry="'+l.ry+'"/><ellipse cx="'+(l.x-l.rx*0.3)+'" cy="'+(l.y-l.ry*0.35)+'" rx="'+(l.rx*0.3)+'" ry="'+(l.ry*0.14)+'" fill="#fff" opacity=".35"/></g>';
+  });
+  TERR.forEach(t => { s += terrace(t[0], t[1], t[2]); });
+
+  const clear = (x, y, k) => !PLACES.some(p => Math.hypot(x-p.x, y-(p.y-30)) < k)
+    && !LAKES.some(l => Math.hypot(x-l.x, y-l.y) < 75)
+    && !TERR.some(t => Math.abs(x-t[0]) < 70 && y > t[1]-30 && y < t[1]+60)
+    && !REGIONS.some(r => Math.abs(x-r.x) < 90 && Math.abs(y-(r.y-8)) < 26);
+  const onLand = (x, y) => inPoly(x, y, ISLAND) && edgeDist(x, y, ISLAND) > 34;
+  const trees = [];
+  for(let n=0; n<4000 && trees.length<52; n++){
+    const x = 80+rand()*1230, y = 150+rand()*740;
+    if(onLand(x, y) && clear(x, y, 60) && !trees.some(t => Math.hypot(t[0]-x, t[1]-y) < 52)) trees.push([x, y, 0.85+rand()*0.35, (rand()-.5)*14]);
+  }
+  const flowers = [], fc = ['#FF9EB5','#FFFFFF','#FFE27A'];
+  for(let n=0; n<4000 && flowers.length<80; n++){
+    const x = 80+rand()*1230, y = 150+rand()*740;
+    if(onLand(x, y) && clear(x, y, 46) && !trees.some(t => Math.hypot(t[0]-x, t[1]-y) < 28)) flowers.push([x, y, fc[Math.floor(rand()*3)]]);
+  }
+  flowers.forEach(f => { s += '<g transform="translate('+f1(f[0])+' '+f1(f[1])+')"><circle r="3.2" fill="'+f[2]+'"/><circle r="1.1" fill="#FFC93C"/></g>'; });
+  trees.sort((a,b) => a[1]-b[1]).forEach(t => { s += palm(f1(t[0]), f1(t[1]), f1(t[2]), f1(t[3])); });
+  s += palm(1050, 832, 0.85, 6) + palm(984, 774, 0.7, -4);
+
+  s += cloud(200, 150, -20, 1.2) + cloud(560, 180, -100, 1.5) + cloud(900, 130, -60, 1);
+  s += '<g transform="translate(960 940)"><g class="boat"><path d="M-22 0 H22 L15 10 H-15Z" fill="var(--act)"/><path d="M0 -4 V-38" stroke="var(--ink)" stroke-width="2.4"/><path d="M2 -36 L24 -6 H2Z" fill="#fff"/><path d="M-2 -30 L-17 -6 H-2Z" fill="var(--club)"/></g></g>';
+
+  const ZONES = [
+    {zh:'烏布', c:'#2FA36B', side:'top', max:80}, {zh:'庫塔', c:'#E8643C', side:'left'}, {zh:'金巴蘭', c:'#2F8FD8', side:'left'},
+    {zh:'努沙杜瓦', c:'#D99A0B', side:'right'}, {zh:'烏魯瓦圖', c:'#8E5BD6', side:'left'}, {zh:'彰古', c:'#D8559A', side:'left', dy:-26},
+    {zh:'水明漾', c:'#17A2A2', side:'left', dy:4}, {zh:'沙努爾', c:'#7A8F1E', side:'bottom'}
+  ];
+  s += '<g id="zflags">'+window.__zflags+'</g>';
+  const zoneSet = new Set(ZONES.map(z => z.zh));
+  const med = a => { const t = a.slice().sort((m, n) => m-n); return t[Math.floor(t.length/2)]; };
+  let zs = '';
+  ZONES.forEach(z => {
+    const ps = PLACES.filter(p => p.region === z.zh); if(!ps.length) return;
+    const cx = med(ps.map(p => p.x)), cy = med(ps.map(p => p.y));
+    const ds = ps.map(p => Math.hypot(p.x-cx, p.y-cy)).sort((m, n) => m-n);
+    const r = Math.min(z.max || 56, Math.max(34, ds[Math.floor(ds.length*.75)] * 1.2 + 18));
+    const en = (REGIONS.find(q => q.zh === z.zh) || ps[0]).en || ps[0].regionEn;
+    const lx = z.side === 'left' ? cx - r - 8 : z.side === 'right' ? cx + r + 8 : cx;
+    const ly = (z.side === 'top' ? cy - r - 8 : z.side === 'bottom' ? cy + r + 26 : cy + 8) + (z.dy || 0);
+    const anc = z.side === 'left' ? 'end' : z.side === 'right' ? 'start' : 'middle';
+    zs += '<g class="zone-g"><circle class="zone-fill" cx="'+f1(cx)+'" cy="'+f1(cy)+'" r="'+f1(r)+'" fill="'+z.c+'"/>'
+      + '<circle class="zone-line" cx="'+f1(cx)+'" cy="'+f1(cy)+'" r="'+f1(r)+'" stroke="'+z.c+'"/>'
+      + '<text class="zone-name" x="'+f1(lx)+'" y="'+f1(ly)+'" text-anchor="'+anc+'" fill="'+z.c+'">'+z.zh+'區<tspan class="en" dx="0.4em">'+en+'</tspan></text></g>';
+  });
+  s += '<g id="zones">'+zs+'</g>';
+  s += REGIONS.filter(r => !zoneSet.has(r.zh)).map(r => '<text class="region" x="'+r.x+'" y="'+r.y+'" text-anchor="'+r.a+'">'+r.zh
+    + (r.stack ? '<tspan class="en" x="'+r.x+'" dy="1.3em">'+r.en+'</tspan>' : '<tspan class="en" dx="0.45em">'+r.en+'</tspan>')
+    + '</text>').join('');
+
+  s += '<g id="pins"></g><g id="fx"></g><g id="tipLayer"></g>';
+  svg.innerHTML = s;
+}
+
+/* ===== 縮放與拖曳 ===== */
+const BW = 1400, BH = 900, CY = 530, MAXZ = 20;
+let box = {w:1400, h:900};
+let view = {cx:700, cy:530, w:1400};
+let anim = 0, rafApply = 0, lastU = -1;
+
+const fitW = () => Math.max(isMob() ? 1300 : BW, BH * box.w / box.h);   // 手機：一開始就讓島填滿畫面寬度
+const viewH = w => w * box.h / box.w;
+function clampView(v){
+  const fw = fitW();
+  const w = Math.min(fw, Math.max(fw / MAXZ, v.w)), h = viewH(w);
+  const cx = w >= BW ? 700 : Math.min(BW - w/2, Math.max(w/2, v.cx));
+  const slack = isMob() ? h*0.3 : 0;   // 手機：多留一點空間，讓選到的點能移到面板上方
+  const cy = h >= BH ? Math.min(CY + slack, Math.max(CY - slack, v.cy)) : Math.min(980 - h/2 + slack, Math.max(80 + h/2 - slack, v.cy));
+  return {cx, cy, w};
+}
+function metrics(){
+  const f = Math.max(.72, Math.min(1, box.w / 1400));
+  return {f, ppu: box.w / view.w, u: (view.w / box.w) * f};
+}
+function applyView(){
+  const h = viewH(view.w);
+  svg.setAttribute('viewBox', f1(view.cx - view.w/2)+' '+f1(view.cy - h/2)+' '+f1(view.w)+' '+f1(h));
+  const m = metrics();
+  svg.style.setProperty('--u', m.u.toFixed(4));
+  if(Math.abs(m.u - lastU) > lastU * 0.002 || lastU < 0){ lastU = m.u; renderPins(); update(); }
+}
+function requestApply(){ if(!rafApply) rafApply = requestAnimationFrame(() => { rafApply = 0; applyView(); }); }
+function zoomAt(clientX, clientY, k){
+  const r = svg.getBoundingClientRect();
+  const fx = (clientX - r.left) / r.width, fy = (clientY - r.top) / r.height;
+  const h = viewH(view.w);
+  const sx = view.cx - view.w/2 + fx*view.w, sy = view.cy - h/2 + fy*h;
+  const w2 = Math.min(fitW(), Math.max(fitW()/MAXZ, view.w / k)), h2 = viewH(w2);
+  view = clampView({cx: sx - (fx-0.5)*w2, cy: sy - (fy-0.5)*h2, w: w2});
+  requestApply();
+}
+function panBy(dx, dy){
+  const ppu = box.w / view.w;
+  view = clampView({cx: view.cx - dx/ppu, cy: view.cy - dy/ppu, w: view.w});
+  requestApply();
+}
+function flyTo(cx, cy, w){
+  cancelAnimationFrame(anim);
+  const target = clampView({cx, cy, w});
+  if(reduceMotion()){ view = target; applyView(); return; }
+  const start = {...view}, t0 = performance.now();
+  const step = t => {
+    const k = Math.min(1, (t - t0) / 450), e = 1 - Math.pow(1 - k, 3);
+    view = {cx: start.cx + (target.cx-start.cx)*e, cy: start.cy + (target.cy-start.cy)*e, w: start.w * Math.pow(target.w/start.w, e)};
+    applyView();
+    if(k < 1) anim = requestAnimationFrame(step);
+  };
+  anim = requestAnimationFrame(step);
+}
+function fitToPlaces(list){
+  if(!list.length) return;
+  if(list.length === 1){ flyTo(list[0].x, list[0].y - 30, Math.min(view.w, fitW()/3)); return; }
+  const xs = list.map(p => p.x), ys = list.map(p => p.y);
+  const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+  const w = Math.max((x1-x0)*1.6, (y1-y0+80)*1.6*box.w/box.h, 320);
+  flyTo((x0+x1)/2, (y0+y1)/2 - 30, w);
+}
+function measure(){
+  const wasFit = view.w >= fitW() - 0.5;
+  const r = svg.getBoundingClientRect();
+  if(r.width < 10 || r.height < 10) return;
+  box = {w:r.width, h:r.height};
+  if(wasFit) view.w = fitW();
+  view = clampView(view);
+  lastU = -1;
+  applyView();
+}
+
+const ptrs = new Map();
+let drag = null, pinch = null, dragMoved = false;
+svg.addEventListener('wheel', e => {
+  e.preventDefault(); cancelAnimationFrame(anim);
+  zoomAt(e.clientX, e.clientY, Math.exp(-e.deltaY * (e.ctrlKey ? 0.01 : 0.0015)));
+}, {passive:false});
+svg.addEventListener('pointerdown', e => {
+  if(e.pointerType === 'mouse' && e.button !== 0) return;
+  cancelAnimationFrame(anim);
+  dragMoved = false;
+  if(editMode){
+    const pe = e.target.closest('.pin');
+    if(pe){
+      pinDrag = {id:pe.dataset.id, pid:e.pointerId, moved:false, sx:e.clientX, sy:e.clientY};
+      try{ svg.setPointerCapture(e.pointerId); }catch(err){}
+      e.preventDefault();
+      return;
+    }
+  }
+  ptrs.set(e.pointerId, {x:e.clientX, y:e.clientY});
+  if(ptrs.size === 2){
+    const [a, b] = [...ptrs.values()];
+    pinch = {d: Math.hypot(a.x-b.x, a.y-b.y), mx: (a.x+b.x)/2, my: (a.y+b.y)/2};
+    drag = null;
+  } else drag = {id:e.pointerId, x:e.clientX, y:e.clientY, captured:false};
+});
+svg.addEventListener('pointermove', e => {
+  if(pinDrag && e.pointerId === pinDrag.pid){
+    if(!pinDrag.moved && Math.hypot(e.clientX-pinDrag.sx, e.clientY-pinDrag.sy) < 4) return;
+    pinDrag.moved = true; dragMoved = true;
+    const r = svg.getBoundingClientRect(), h = viewH(view.w), p = byId[pinDrag.id];
+    p.x = Math.round(view.cx - view.w/2 + (e.clientX - r.left) / r.width * view.w);
+    p.y = Math.round(view.cy - h/2 + (e.clientY - r.top) / r.height * h);
+    const el = document.querySelector('.pin[data-id="'+p.id+'"]');
+    if(el) el.setAttribute('transform', 'translate('+p.x+' '+p.y+') scale('+(.92 * metrics().u).toFixed(3)+')');
+    renderTip(p);
+    return;
+  }
+  if(!ptrs.has(e.pointerId)) return;
+  const prev = ptrs.get(e.pointerId);
+  ptrs.set(e.pointerId, {x:e.clientX, y:e.clientY});
+  if(ptrs.size === 2 && pinch){
+    const [a, b] = [...ptrs.values()];
+    const d = Math.hypot(a.x-b.x, a.y-b.y), mx = (a.x+b.x)/2, my = (a.y+b.y)/2;
+    if(pinch.d > 0) zoomAt(mx, my, d / pinch.d);
+    panBy(mx - pinch.mx, my - pinch.my);
+    pinch = {d, mx, my}; dragMoved = true; return;
+  }
+  if(drag && drag.id === e.pointerId){
+    if(!drag.captured && Math.hypot(e.clientX-drag.x, e.clientY-drag.y) > 5){
+      drag.captured = true; dragMoved = true;
+      try{ svg.setPointerCapture(e.pointerId); }catch(err){}
+      svg.classList.add('dragging');
+    }
+    if(drag.captured) panBy(e.clientX - prev.x, e.clientY - prev.y);
+  }
+});
+['pointerup', 'pointercancel'].forEach(t => svg.addEventListener(t, e => {
+  if(pinDrag && e.pointerId === pinDrag.pid){
+    const p = byId[pinDrag.id];
+    if(pinDrag.moved){ p.moved = true; savePositions(); updateEditBar(); }
+    pinDrag = null; renderPins(); update(); return;
+  }
+  ptrs.delete(e.pointerId);
+  if(ptrs.size < 2) pinch = null;
+  if(drag && drag.id === e.pointerId){ drag = null; svg.classList.remove('dragging'); }
+}));
+const centerClient = () => { const r = svg.getBoundingClientRect(); return [r.left + r.width/2, r.top + r.height/2]; };
+$('#zin').addEventListener('click', () => { const c = centerClient(); zoomAt(c[0], c[1], 1.6); });
+$('#zout').addEventListener('click', () => { const c = centerClient(); zoomAt(c[0], c[1], 1/1.6); });
+$('#zfit').addEventListener('click', () => flyTo(700, CY, fitW()));
+
+/* ===== 篩選狀態 ===== */
+let listOpen = false;
+let pinned = null, hover = null, query = '', regionSel = '', editMode = false, pinDrag = null;
+const sel = new Set(GROUPS.map(g => g.key));
+const SUBS = [...new Set(PLACES.map(p => p.sub).filter(Boolean))];
+const subSel = new Set(SUBS);
+function matches(p){
+  if(!sel.has(p.type)) return false;
+  if(p.sub && !subSel.has(p.sub)) return false;
+  if(regionSel && p.region !== regionSel) return false;
+  if(zoneOff.has(p.zone)) return false;
+  if(query){
+    const t = (p.name+' '+p.short+' '+p.region+' '+p.regionEn+' '+p.cat+' '+p.sub+' '+p.desc+' '+p.place).toLowerCase();
+    if(!t.includes(query)) return false;
+  }
+  return true;
+}
+const visible = matches;
+
+function buildFilters(){
+  const keys = GROUPS.filter(g => PLACES.some(p => p.type === g.key) || ALWAYS.includes(g.key));
+  $('#cats').innerHTML = '<legend class="sr">地點類型（可複選）</legend>' + keys.map(g => {
+    const n = PLACES.filter(p => p.type === g.key).length;
+    return '<div class="cat t-'+g.key+'" data-k="'+g.key+'"><label><input type="checkbox" checked><span class="sw"></span>'+g.name+'<span class="n">'+n+'</span></label>'
+      + '<button class="solo" type="button" data-solo="'+g.key+'" aria-label="只看'+g.name+'">只看</button></div>';
+  }).join('');
+  if(SUBS.length > 1){
+    $('#subs').hidden = false;
+    $('#subs').innerHTML = '<legend class="sr">住宿類型（可複選）</legend><span class="subtitle">住宿類型</span>' + SUBS.map(s => {
+      const n = PLACES.filter(p => p.sub === s).length;
+      return '<div class="cat" data-s="'+esc(s)+'"><label><input type="checkbox" checked><span class="sw"></span>'+esc(s)+'<span class="n">'+n+'</span></label></div>';
+    }).join('');
+  }
+  const regions = [];
+  PLACES.forEach(p => { if(!regions.some(r => r.zh === p.region)) regions.push({zh:p.region, en:p.regionEn}); });
+  $('#region').innerHTML = '<option value="">全部地區</option>' + regions.map(r => '<option value="'+esc(r.zh)+'">'+esc(r.zh)+(r.en ? ' '+esc(r.en) : '')+'</option>').join('');
+}
+function syncChecks(){
+  document.querySelectorAll('#cats .cat').forEach(el => {
+    const on = sel.has(el.dataset.k);
+    el.querySelector('input').checked = on;
+    el.classList.toggle('off', !on);
+  });
+  document.querySelectorAll('#subs .cat').forEach(el => {
+    const on = subSel.has(el.dataset.s);
+    el.querySelector('input').checked = on;
+    el.classList.toggle('off', !on);
+  });
+}
+function updateCount(){
+  const n = PLACES.filter(matches).length;
+  $('#count').textContent = '顯示 '+n+' / '+PLACES.length+' 個地點';
+  $('#tbDone').textContent = '看地圖（'+n+' 個地點）';
+  $('#dkFilter').textContent = '篩選・搜尋' + (n < PLACES.length ? '（'+n+'）' : '');
+}
+function refresh(){ syncChecks(); $('#subs').hidden = !(SUBS.length > 1 && sel.has('hotel')); if(pinned && !matches(byId[pinned])) pinned = null; renderPins(); update(); updateCount(); }
+
+$('#cats').addEventListener('change', e => {
+  const el = e.target.closest('.cat'); if(!el) return;
+  e.target.checked ? sel.add(el.dataset.k) : sel.delete(el.dataset.k);
+  refresh();
+  const list = PLACES.filter(matches);
+  if(list.length){ fitToPlaces(list); centerMapInView(); } else { flyTo(700, CY, fitW()); }
+});
+$('#subs').addEventListener('change', e => {
+  const el = e.target.closest('.cat'); if(!el) return;
+  e.target.checked ? subSel.add(el.dataset.s) : subSel.delete(el.dataset.s);
+  refresh();
+  const list = PLACES.filter(matches);
+  if(list.length){ fitToPlaces(list); centerMapInView(); }
+});
+$('#cats').addEventListener('click', e => {
+  const b = e.target.closest('[data-solo]'); if(!b) return;
+  sel.clear(); sel.add(b.dataset.solo); refresh();
+  fitToPlaces(PLACES.filter(matches)); centerMapInView();
+});
+$('#allBtn').addEventListener('click', () => { GROUPS.forEach(g => sel.add(g.key)); SUBS.forEach(s => subSel.add(s)); refresh(); });
+$('#noneBtn').addEventListener('click', () => { sel.clear(); refresh(); });
+let qTimer = 0;
+$('#q').addEventListener('input', e => {
+  clearTimeout(qTimer);
+  qTimer = setTimeout(() => {
+    query = e.target.value.trim().toLowerCase(); refresh();
+    if(query){ fitToPlaces(PLACES.filter(matches)); centerMapInView(); }
+  }, 180);
+});
+$('#region').addEventListener('change', e => {
+  regionSel = e.target.value; refresh();
+  if(regionSel) fitToPlaces(PLACES.filter(matches)); else flyTo(700, CY, fitW());
+  centerMapInView();
+});
+
+/* ===== 圖示與聚合 ===== */
+function bodyShape(t){
+  if(t === 'hotel') return '<rect class="badge" x="-24" y="-60" width="48" height="48" rx="15"/>';
+  if(t === 'shop') return '<rect class="badge" x="-24" y="-60" width="48" height="48" rx="8"/>';
+  if(t === 'club') return '<polygon class="badge" points="0,-67 29,-36 0,-5 -29,-36"/>';
+  if(t === 'food') return '<polygon class="badge" points="0,-64 24,-50 24,-22 0,-8 -24,-22 -24,-50"/>';
+  return '<circle class="badge" cy="-36" r="25"/>';
+}
+function pinSVG(p, i, S){
+  return '<g class="pin t-'+p.type+(p.id === pinned ? ' is-pinned' : '')+'" data-id="'+p.id+'" tabindex="0" role="button" aria-label="'+esc(p.short)+'（'+esc(catName(p))+'，'+esc(p.region)+'）" transform="translate('+p.x+' '+p.y+') scale('+S.toFixed(3)+')">'
+    + '<ellipse class="pin-shadow" rx="16" ry="5"/>'
+    + '<g class="pin-body"><g class="pin-idle" style="--i:'+(i%7)+'">'
+    + '<circle class="ring" cy="-36" r="36"/>'
+    + '<path class="tail" d="M-9 -16 L0 0 L9 -16Z"/>'
+    + bodyShape(p.type)
+    + '<g transform="translate(0 -36)">'+(SYM[p.icon] || SYM.palm)+'</g>'
+    + '</g></g>'
+    + '<circle class="hit" cy="-34" r="28"/></g>';
+}
+let curClusters = [];
+function renderPins(){
+  const g = $('#pins'); if(!g) return;
+  const m = metrics(), S = .92 * m.u * (isMob() ? 1.35 : 1), R = (isMob() ? 56 : 44) * m.f;
+  const list = PLACES.filter(matches).sort((a, b) => a.y - b.y);
+  const noCluster = editMode || view.w <= fitW() / 14;
+  const groups = [];
+  list.forEach(p => {
+    if(noCluster || p.id === pinned){ groups.push({items:[p], cx:p.x, cy:p.y, fixed:true}); return; }
+    const c = groups.find(q => !q.fixed && Math.hypot(q.cx-p.x, q.cy-p.y) * m.ppu < R);
+    if(c){ c.items.push(p); c.cx = c.items.reduce((a, b) => a + b.x, 0) / c.items.length; c.cy = c.items.reduce((a, b) => a + b.y, 0) / c.items.length; }
+    else groups.push({items:[p], cx:p.x, cy:p.y, fixed:false});
+  });
+  curClusters = groups.filter(c => c.items.length > 1);
+  let html = '';
+  groups.forEach((c, i) => {
+    if(c.items.length === 1){ html += pinSVG(c.items[0], i, S); return; }
+    const idx = curClusters.indexOf(c);
+    const types = [...new Set(c.items.map(p => p.type))];
+    const cls = types.length === 1 ? 't-'+types[0] : 't-mix';
+    html += '<g class="cluster '+cls+'" data-c="'+idx+'" tabindex="0" role="button" aria-label="'+c.items.length+' 個地點，點一下放大" transform="translate('+f1(c.cx)+' '+f1(c.cy)+') scale('+S.toFixed(3)+')">'
+      + '<ellipse class="pin-shadow" rx="18" ry="5"/><g class="cbody"><circle class="ring" cy="-30" r="32"/>'
+      + '<circle class="badge" cy="-30" r="27" stroke-width="5"/><text class="ctext" y="-22">'+c.items.length+'</text></g></g>';
+  });
+  g.innerHTML = html;
+}
+
+/* ===== 資訊面板 ===== */
+const iconSVG = p => '<svg viewBox="-16 -16 32 32" aria-hidden="true">'+(SYM[p.icon] || SYM.palm)+'</svg>';
+function indexList(){
+  const list = PLACES.filter(matches);
+  if(!list.length) return '<p class="empty">沒有符合條件的地點。可以調整上方的類型、搜尋或地區。</p>';
+  const regions = [];
+  list.forEach(p => { if(!regions.includes(p.region)) regions.push(p.region); });
+  return regions.map(r => {
+    const g = list.filter(p => p.region === r);
+    return '<h3>'+esc(r)+'（'+g.length+'）</h3><ul class="index">'
+      + g.map(p => '<li><button class="row t-'+p.type+'" type="button" data-goto="'+p.id+'"><span class="dot"></span><span class="nm">'+esc(p.short)+'</span><small>'+esc(catName(p))+'</small></button></li>').join('')
+      + '</ul>';
+  }).join('');
+}
+function renderPanel(p){
+  const el = $('#panel');
+  if(!p){
+    el.innerHTML = (isMob() ? '<button class="p-close" type="button" data-close aria-label="關閉清單">✕</button><h2>地點清單</h2><p class="hint">點一下地點，地圖會移過去並顯示介紹。</p>' : '<h2>歡迎來到峇里島</h2><p class="hint">把滑鼠移到圖示上，這裡會顯示介紹。點一下可以固定，也可以從下面的清單挑地點，地圖會移過去。</p>') + indexList();
+    return;
+  }
+  const closeBtn = '<button class="p-close" type="button" data-close aria-label="關閉介紹視窗">✕</button>';
+  const info = [['門票',p.ticket],['美元標價',p.usd],['盧布標價',p.idr],['台幣標價',p.twd],['Klook',p.klook],['KKday',p.kkday]].filter(r => r[1]);
+  const rows = (p.sub ? [['類型',p.sub]] : []).concat(p.place ? [['地點',p.place]] : []).concat(info).map(r => '<dt>'+r[0]+'</dt><dd>'+esc(r[1])+'</dd>').join('');
+  const same = PLACES.filter(q => q.region === p.region && q.id !== p.id && matches(q))
+    .sort((a, b) => Math.hypot(a.x-p.x, a.y-p.y) - Math.hypot(b.x-p.x, b.y-p.y));
+  const near = same.slice(0, 8).map(n => '<button class="btn" type="button" data-goto="'+n.id+'">'+esc(n.short)+'</button>').join('')
+    + (same.length > 8 ? '<span class="hint">還有 '+(same.length-8)+' 個，可從地圖或搜尋找</span>' : '');
+  const url = safeUrl(p.url);
+  const isMap = /maps\.app\.goo\.gl|google\.[a-z.]+\/maps/i.test(url);
+  el.innerHTML = closeBtn + '<div class="p-head t-'+p.type+'"><span class="p-icon t-'+p.type+'">'+iconSVG(p)+'</span><div><span class="tag t-'+p.type+'">'+esc(catName(p))+'・'+esc(p.region)+(p.regionEn ? ' '+esc(p.regionEn) : '')+'</span>'+(ZDEF[p.zone] ? '<span class="ztag" style="--zc:'+ZDEF[p.zone].c+'">'+ZDEF[p.zone].name+'</span>' : '')+'<h2>'+esc(p.name)+'</h2></div></div>'
+    + (p.desc ? '<p class="longtext">'+esc(p.desc)+'</p>' : '<p class="empty">尚未填寫介紹。</p>')
+    + (rows ? '<dl class="rows">'+rows+'</dl>' : '')
+    + (p.review ? '<div class="review"><h3>小編銳評</h3><p class="longtext" style="margin:0">'+esc(p.review)+'</p></div>' : '')
+    + (p.rules ? '<h3>特別規定</h3><p class="longtext" style="margin-top:0">'+esc(p.rules)+'</p>' : '')
+    + (near ? '<h3>同地區的其他地點</h3><div class="near">'+near+'</div>' : '')
+    + (url ? '<a class="go" href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">'+(isMap ? '在地圖開啟' : '前往網站')+' ↗</a>' : '')
+    + (safeUrl(p.ig) && safeUrl(p.ig) !== url ? '<a class="go alt2" href="'+esc(safeUrl(p.ig))+'" target="_blank" rel="noopener noreferrer">Instagram ↗</a>' : '')
+    + (p.map && !isMap ? '<a class="go'+(url ? ' alt' : '')+'" href="'+esc(p.map)+'" target="_blank" rel="noopener noreferrer">Google 地圖 ↗</a>' : '')
+    + (pinned === p.id ? '<div class="pinned-note"><span>已固定在這裡</span><button type="button" data-unpin>取消固定</button></div>' : '');
+}
+/* ===== 手機：一頁式清單 ===== */
+function cardBody(p){
+  const info = [['門票',p.ticket],['美元標價',p.usd],['盧布標價',p.idr],['台幣標價',p.twd],['Klook',p.klook],['KKday',p.kkday]].filter(r => r[1]);
+  const rows = (p.sub ? [['類型',p.sub]] : []).concat(p.place ? [['地點',p.place]] : []).concat(info).map(r => '<dt>'+r[0]+'</dt><dd>'+esc(r[1])+'</dd>').join('');
+  const url = safeUrl(p.url), isMap = /maps\.app\.goo\.gl|google\.[a-z.]+\/maps/i.test(url);
+  return (p.desc ? '<p class="longtext">'+esc(p.desc)+'</p>' : '<p class="empty">尚未填寫介紹。</p>')
+    + (rows ? '<dl class="rows">'+rows+'</dl>' : '')
+    + (p.review ? '<div class="review"><h3>小編銳評</h3><p class="longtext" style="margin:0">'+esc(p.review)+'</p></div>' : '')
+    + (p.rules ? '<h3>特別規定</h3><p class="longtext" style="margin-top:0">'+esc(p.rules)+'</p>' : '')
+    + '<p>' + (url ? '<a class="go" href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">'+(isMap ? '在地圖開啟' : '前往網站')+' ↗</a>' : '')
+    + (safeUrl(p.ig) && safeUrl(p.ig) !== url ? '<a class="go alt2" href="'+esc(safeUrl(p.ig))+'" target="_blank" rel="noopener noreferrer">Instagram ↗</a>' : '')
+    + (p.map && !isMap ? '<a class="go'+(url ? ' alt' : '')+'" href="'+esc(p.map)+'" target="_blank" rel="noopener noreferrer">Google 地圖 ↗</a>' : '') + '</p>';
+}
+let mKey = '';
+function renderMList(){
+  if(!isMob()) return;
+  const key = [[...sel].join(), [...subSel].join(), query, regionSel, [...zoneOff].join()].join('|');
+  if(key === mKey) return; mKey = key;
+  const list = PLACES.filter(matches);
+  if(!list.length){ $('#mlist').innerHTML = '<p class="empty">沒有符合條件的地點。可以調整上方的類型、搜尋或地區。</p>'; return; }
+  $('#mlist').innerHTML = Object.keys(ZDEF).map(z => {
+    const zl = list.filter(p => p.zone === z); if(!zl.length) return '';
+    const regs = []; zl.forEach(p => { if(!regs.includes(p.region)) regs.push(p.region); });
+    return '<details class="mzone" open style="--zc:'+ZDEF[z].d+'"><summary><i></i>'+ZDEF[z].name+'<small>'+zl.length+' 個</small></summary>'
+      + regs.map(r => '<h3 class="mreg">'+esc(r)+'</h3>' + zl.filter(p => p.region === r).map(p =>
+        '<details class="mcard t-'+p.type+'"><summary><span class="p-icon t-'+p.type+'">'+iconSVG(p)+'</span><span class="mt"><b>'+esc(p.short)+'</b><small>'+esc(catName(p))+(p.sub ? '・'+esc(p.sub) : '')+'</small></span></summary><div class="mbody">'+cardBody(p)+'</div></details>').join('')).join('')
+      + '</details>';
+  }).join('');
+}
+addEventListener('scroll', () => $('#toTop').classList.toggle('show', scrollY > 700), {passive:true});
+$('#toTop').addEventListener('click', () => scrollTo({top:0, behavior: reduceMotion() ? 'auto' : 'smooth'}));
+matchMedia('(max-width:999px)').addEventListener('change', () => { mKey = ''; renderMList(); });
+function renderTip(p){
+  const g = $('#tipLayer');
+  if(!p){ g.innerHTML = ''; return; }
+  const S = .92 * metrics().u * (isMob() ? 1.35 : 1);
+  const topY = view.cy - viewH(view.w)/2;
+  const below = p.y - 80*S < topY + 30*S;
+  g.innerHTML = '<text class="tip" x="'+p.x+'" y="'+f1(below ? p.y + 32*S : p.y - 72*S)+'">'+esc(p.short)+'</text>';
+}
+let lastShown = '';
+function update(){
+  const cur = byId[hover] || byId[pinned] || null;
+  const key = (cur ? cur.id : '') + '|' + (pinned || '') + '|' + (cur ? '' : [...sel].join()+[...subSel].join()+query+regionSel);
+  if(key !== lastShown || !cur){ renderPanel(cur); lastShown = key; }
+  renderTip(cur);
+  document.querySelectorAll('.pin').forEach(el => el.classList.toggle('is-pinned', el.dataset.id === pinned));
+  document.body.classList.toggle('sheet-panel', isMob() && (!!pinned || listOpen));
+  renderMList();
+}
+function isMob(){ return matchMedia('(max-width:999px)').matches; }
+/* 手機：把選到的點放在畫面上半部，避免被下方面板蓋住 */
+function flyToPin(p, w){
+  if(isMob()){ const h = viewH(w); flyTo(p.x, p.y + h*0.27, w); } else flyTo(p.x, p.y - 30, w);
+}
+function centerMapInView(){
+  const r = $('#mapbox').getBoundingClientRect(), c = r.top + r.height/2;
+  if(c > innerHeight*0.7 || c < innerHeight*0.3) window.scrollBy({top: c - innerHeight/2, behavior: reduceMotion() ? 'auto' : 'smooth'});
+}
+function focusPanel(){}
+function selectPlace(id, fly){
+  pinned = id; hover = null; listOpen = false;
+  renderPins(); update();
+  const p = byId[id];
+  if(fly && p) flyToPin(p, Math.min(view.w, fitW() / 2.8));
+  focusPanel();
+  if(!matchMedia('(max-width:999px)').matches) centerMapInView();
+}
+
+/* ===== 地圖上的互動（事件委派） ===== */
+svg.addEventListener('pointerover', e => {
+  if(e.pointerType === 'touch') return;
+  const el = e.target.closest('.pin');
+  if(el && el.dataset.id !== hover){ hover = el.dataset.id; update(); }
+});
+svg.addEventListener('pointerout', e => {
+  const el = e.target.closest('.pin');
+  if(el && !el.contains(e.relatedTarget)){ hover = null; update(); }
+});
+svg.addEventListener('focusin', e => { const el = e.target.closest('.pin'); if(el){ hover = el.dataset.id; update(); } });
+svg.addEventListener('focusout', e => { if(e.target.closest('.pin')){ hover = null; update(); } });
+svg.addEventListener('keydown', e => {
+  if((e.key === 'Enter' || e.key === ' ') && e.target.closest('.pin, .cluster')){
+    e.preventDefault(); e.target.dispatchEvent(new MouseEvent('click', {bubbles:true}));
+  }
+});
+svg.addEventListener('click', e => {
+  if(dragMoved){ dragMoved = false; return; }
+  if($('#mapbox').classList.contains('placing')){
+    const r = svg.getBoundingClientRect(), h = viewH(view.w);
+    const x = Math.round(view.cx - view.w/2 + (e.clientX - r.left) / r.width * view.w);
+    const y = Math.round(view.cy - h/2 + (e.clientY - r.top) / r.height * h);
+    $('#coordval').value = 'x: '+x+', y: '+y;
+    const u = metrics().u;
+    $('#fx').innerHTML = '<g transform="translate('+x+' '+y+') scale('+u.toFixed(3)+')"><circle r="9" fill="#fff" stroke="var(--act)" stroke-width="3"/><path d="M-15 0H15M0 -15V15" stroke="var(--act)" stroke-width="3" stroke-linecap="round"/></g>';
+    return;
+  }
+  const c = e.target.closest('.cluster');
+  if(c){
+    const g = curClusters[+c.dataset.c];
+    if(g){
+      const xs = g.items.map(p => p.x), ys = g.items.map(p => p.y);
+      const bw = Math.max(...xs) - Math.min(...xs), bh = Math.max(...ys) - Math.min(...ys);
+      const w = Math.max(Math.min(view.w * 0.45, fitW()), (bw*2.4), bh*2.4*box.w/box.h, fitW()/MAXZ);
+      flyTo(g.cx, g.cy - 30, Math.min(w, view.w * 0.7));
+    }
+    return;
+  }
+  const el = e.target.closest('.pin');
+  if(el){
+    const id = el.dataset.id;
+    pinned = pinned === id ? null : id; hover = null; listOpen = false;
+    renderPins(); update();
+    if(pinned && isMob()) flyToPin(byId[id], view.w);
+    return;
+  }
+  if(isMob()) closeSheets();
+});
+
+const panel = $('#panel');
+panel.addEventListener('click', e => {
+  const g = e.target.closest('[data-goto]');
+  if(g){ selectPlace(g.dataset.goto, true); return; }
+  if(e.target.closest('[data-unpin]')){ pinned = null; renderPins(); update(); }
+  if(e.target.closest('[data-close]')) closePanel();
+});
+function closePanel(){ pinned = null; hover = null; listOpen = false; renderPins(); update(); }
+function closeSheets(){ document.body.classList.remove('sheet-filter'); closePanel(); }
+$('#dkFilter').addEventListener('click', () => { document.body.classList.add('sheet-filter'); });
+$('#tbClose').addEventListener('click', () => document.body.classList.remove('sheet-filter'));
+$('#tbDone').addEventListener('click', () => document.body.classList.remove('sheet-filter'));
+$('#dkList').addEventListener('click', () => { pinned = null; listOpen = true; renderPins(); update(); });
+$('#dkFit').addEventListener('click', () => flyTo(700, CY, fitW()));
+/* 手機時，分區圖例放進篩選面板 */
+(function(){
+  const place = () => {
+    const lg = $('#zlegend'); if(!lg) return;
+    if(isMob()){ $('#toolbar').insertBefore(lg, $('#tbDone')); lg.classList.add('open'); }
+    else { $('#mapbox').appendChild(lg); lg.classList.toggle('open', matchMedia('(min-width:1000px)').matches); }
+  };
+  matchMedia('(max-width:999px)').addEventListener('change', () => { place(); update(); });
+  window.__placeLegend = place;
+})();
+document.addEventListener('keydown', e => { if(e.key === 'Escape' && (pinned || hover) && !editMode) closePanel(); });
+const hot = (e, on) => {
+  const g = e.target.closest('[data-goto]');
+  if(!g) return;
+  const pin = document.querySelector('.pin[data-id="'+g.dataset.goto+'"]');
+  if(pin) pin.classList.toggle('is-hot', on);
+};
+panel.addEventListener('mouseover', e => hot(e, true));
+panel.addEventListener('mouseout', e => hot(e, false));
+
+/* ===== 取得座標、調整位置 ===== */
+function updateEditBar(){
+  const n = PLACES.filter(p => p.moved).length;
+  $('#editMsg').textContent = n ? '已調整 '+n+' 個地點。調整好後按「複製位置」，貼給 Claude 就能寫進地圖。' : '拖曳圖示到正確的位置。縮放到最大可以調得更細。';
+}
+function setMode(mode){
+  const placing = mode === 'place', editing = mode === 'edit';
+  $('#placeBtn').setAttribute('aria-pressed', String(placing));
+  $('#editBtn').setAttribute('aria-pressed', String(editing));
+  $('#mapbox').classList.toggle('placing', placing);
+  $('#mapbox').classList.toggle('editing', editing);
+  $('#coordbar').hidden = !placing;
+  $('#editbar').hidden = !editing;
+  if(!placing) $('#fx').innerHTML = '';
+  editMode = editing;
+  updateEditBar();
+  renderPins(); update();
+}
+$('#placeBtn').addEventListener('click', () => setMode($('#placeBtn').getAttribute('aria-pressed') === 'true' ? '' : 'place'));
+(function(){
+  const box = $('#mapbox');
+  box.insertAdjacentHTML('beforeend', '<div class="zlegend'+(matchMedia('(min-width:1000px)').matches ? ' open' : '')+'" id="zlegend" role="group" aria-label="車程分區"><button class="zhead" type="button" id="zhead" aria-expanded="'+matchMedia('(min-width:1000px)').matches+'">車程分區</button>'
+    + Object.keys(ZDEF).map(k => '<button class="zlb" type="button" data-z="'+k+'" aria-pressed="true" style="--zc:'+ZDEF[k].d+'"><i></i><span>'+ZDEF[k].name+' <small>'+ZDEF[k].note+'</small></span></button>').join('') + '</div>');
+  window.__placeLegend();
+  $('#zlegend').addEventListener('click', e => {
+    if(e.target.closest('#zhead')){ const o = $('#zlegend').classList.toggle('open'); $('#zhead').setAttribute('aria-expanded', String(o)); return; }
+    const bt = e.target.closest('.zlb'); if(!bt) return;
+    const k = bt.dataset.z;
+    if(zoneOff.has(k)) zoneOff.delete(k); else zoneOff.add(k);
+    bt.setAttribute('aria-pressed', String(!zoneOff.has(k)));
+    document.querySelectorAll('#zonesFill .zf[data-z="'+k+'"], #zflags .zf[data-z="'+k+'"]').forEach(n => n.classList.toggle('off', zoneOff.has(k)));
+    refresh();
+  });
+  $('#allBtn').addEventListener('click', () => { zoneOff.clear(); document.querySelectorAll('.zlb').forEach(n => n.setAttribute('aria-pressed','true')); document.querySelectorAll('#zonesFill .zf, #zflags .zf').forEach(n => n.classList.remove('off')); });
+})();
+$('#zoneBtn').setAttribute('aria-pressed', 'false'); $('#zoneBtn').textContent = '熱門區域 關'; $('#map').classList.add('no-zones');
+$('#zoneBtn').addEventListener('click', () => {
+  const on = $('#zoneBtn').getAttribute('aria-pressed') !== 'true';
+  $('#zoneBtn').setAttribute('aria-pressed', String(on)); $('#zoneBtn').textContent = '熱門區域 ' + (on ? '開' : '關');
+  $('#map').classList.toggle('no-zones', !on);
+});
+$('#editBtn').addEventListener('click', () => setMode(editMode ? '' : 'edit'));
+$('#resetPos').addEventListener('click', () => {
+  PLACES.forEach(p => { p.x = p.ox; p.y = p.oy; p.moved = false; });
+  savePositions(); updateEditBar(); renderPins(); update();
+});
+$('#copyPos').addEventListener('click', () => {
+  const list = PLACES.filter(p => p.moved);
+  const text = list.length
+    ? '名稱 | 地區 | 畫布座標\n' + list.map(p => p.name+' | '+p.region+(p.regionEn ? ' '+p.regionEn : '')+' | x: '+p.x+', y: '+p.y).join('\n')
+    : '還沒有調整任何地點';
+  const b = $('#copyPos');
+  const done = () => { b.textContent = '已複製'; setTimeout(() => { b.textContent = '複製位置'; }, 1500); };
+  const showText = () => { $('#editMsg').textContent = text; };
+  try{ navigator.clipboard.writeText(text).then(done, showText); }catch(err){ showText(); }
+});
+$('#copyBtn').addEventListener('click', () => {
+  const v = $('#coordval');
+  const done = () => { $('#copyBtn').textContent = '已複製'; setTimeout(() => { $('#copyBtn').textContent = '複製'; }, 1500); };
+  const fallback = () => { v.focus(); v.select(); };
+  try{ navigator.clipboard.writeText(v.value).then(done, fallback); }catch(err){ fallback(); }
+});
+
+/* ===== 啟動 ===== */
+if(matchMedia('(pointer:coarse)').matches) $('#hint').textContent = '雙指縮放・拖曳移動';
+buildMap();
+buildFilters();
+measure();
+updateCount();
+if('ResizeObserver' in window) new ResizeObserver(() => measure()).observe(svg);
+else addEventListener('resize', measure);
+</script>
