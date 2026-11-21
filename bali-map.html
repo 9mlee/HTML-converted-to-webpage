@@ -287,7 +287,7 @@ h1{font-size:clamp(24px,3.4vw,32px); line-height:1.25; margin:0; font-weight:400
   .field, .btn{font-size:17px; min-height:48px}
   .count{font-size:16px}
   .zhead{font-size:16px} .zlb{font-size:17px; min-height:44px} .zlb small, .toolbar .zlb small{font-size:14px}
-  #dock button{font-size:18px; min-height:52px}
+  #dock button{font-size:20px; min-height:56px; padding:0 22px}
   body #panel h2{font-size:27px}
   body #panel h3{font-size:17px}
   body #panel p, body #panel .rows dd{font-size:18px}
@@ -623,7 +623,7 @@ let box = {w:1400, h:900};
 let view = {cx:700, cy:530, w:1400};
 let anim = 0, rafApply = 0, lastU = -1;
 
-const fitW = () => Math.max(BW, BH * box.w / box.h);
+const fitW = () => Math.max(isMob() ? 1300 : BW, BH * box.w / box.h);   // 手機：一開始就讓島填滿畫面寬度
 const viewH = w => w * box.h / box.w;
 function clampView(v){
   const fw = fitW();
@@ -877,7 +877,7 @@ function pinSVG(p, i, S){
 let curClusters = [];
 function renderPins(){
   const g = $('#pins'); if(!g) return;
-  const m = metrics(), S = .92 * m.u, R = 44 * m.f;
+  const m = metrics(), S = .92 * m.u * (isMob() ? 1.35 : 1), R = (isMob() ? 56 : 44) * m.f;
   const list = PLACES.filter(matches).sort((a, b) => a.y - b.y);
   const noCluster = editMode || view.w <= fitW() / 14;
   const groups = [];
@@ -944,7 +944,7 @@ function renderPanel(p){
 function renderTip(p){
   const g = $('#tipLayer');
   if(!p){ g.innerHTML = ''; return; }
-  const S = .92 * metrics().u;
+  const S = .92 * metrics().u * (isMob() ? 1.35 : 1);
   const topY = view.cy - viewH(view.w)/2;
   const below = p.y - 80*S < topY + 30*S;
   g.innerHTML = '<text class="tip" x="'+p.x+'" y="'+f1(below ? p.y + 32*S : p.y - 72*S)+'">'+esc(p.short)+'</text>';
