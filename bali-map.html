@@ -106,6 +106,51 @@ h1{font-size:clamp(24px,3.4vw,32px); line-height:1.25; margin:0; font-weight:400
 .coordbar input{font:inherit; color:var(--ink); background:var(--bg); border:2px solid var(--line); border-radius:12px; padding:4px 10px; width:12.5em; min-width:0}
 .mini{font:inherit; color:var(--btn-fg); background:var(--btn); border:0; border-radius:999px; padding:4px 14px; min-height:34px; cursor:pointer}
 
+
+/* ===== 手機：全螢幕地圖＋底部操作列＋下滑面板 ===== */
+.sheet-head, .done, #dock{display:none}
+@media (max-width:999px){
+  html, body{height:100%; overflow:hidden; overscroll-behavior:none}
+  body{padding:0}
+  .wrap{display:block; max-width:none}
+  header{position:fixed; top:calc(8px + env(safe-area-inset-top, 0px)); left:10px; z-index:5; padding:0 16px; border-radius:999px; pointer-events:none;
+    background:color-mix(in srgb, var(--surface) 90%, transparent); border:2px solid var(--line)}
+  header h1{font-size:17px; line-height:1.9} header .sub{display:none}
+  .mapbox{position:fixed; inset:0; border:0; border-radius:0}
+  #map{width:100%; height:100%; aspect-ratio:auto}
+  .zoom{top:calc(8px + env(safe-area-inset-top, 0px))}
+  .zbtn{width:46px; height:46px}
+  .maphint{top:calc(56px + env(safe-area-inset-top, 0px))}
+  #placeBtn, #editBtn, #zoneBtn{display:none}
+
+  #dock{display:flex; position:fixed; left:50%; transform:translateX(-50%); bottom:calc(14px + env(safe-area-inset-bottom, 0px)); z-index:20; gap:6px; padding:6px;
+    background:color-mix(in srgb, var(--surface) 94%, transparent); border:2px solid var(--line); border-radius:999px; box-shadow:0 8px 24px rgba(20,60,50,.3)}
+  #dock button{font:inherit; min-height:48px; padding:0 20px; border-radius:999px; border:0; background:none; color:var(--ink); cursor:pointer; white-space:nowrap}
+  #dock button.main{background:var(--ink); color:var(--bg)}
+  body.sheet-filter #dock, body.sheet-panel #dock{display:none}
+
+  .toolbar{position:fixed; left:0; right:0; bottom:0; z-index:30; max-height:84dvh; overflow-y:auto; display:block; background:var(--surface); border-top:2px solid var(--line);
+    border-radius:26px 26px 0 0; padding:0 16px 14px; transform:translateY(110%); visibility:hidden; transition:transform .28s ease, visibility 0s .28s; box-shadow:0 -10px 30px rgba(0,0,0,.28)}
+  .toolbar > * + *{margin-top:12px}
+  body.sheet-filter .toolbar{transform:none; visibility:visible; transition:transform .28s ease}
+  .sheet-head{display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:3; background:var(--surface); padding:14px 0 6px; margin:0 !important}
+  .sheet-head strong{font-weight:400; font-size:19px}
+  .sheet-head .p-close{position:static}
+  .row2{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+  #q{width:100%; grid-column:1 / -1} #region{grid-column:1 / -1}
+  .count{grid-column:1 / -1; margin:0}
+  .cat label{min-height:46px} .subs .cat label{min-height:42px}
+  .done{display:block; position:sticky; bottom:0; width:100%; background:var(--ink); color:var(--bg); border-color:var(--ink); min-height:50px; box-shadow:0 -8px 12px var(--surface)}
+  .toolbar .zlegend{position:static; max-width:none; border:0; padding:0; background:none; display:flex; flex-direction:row; flex-wrap:wrap; gap:8px}
+  .toolbar .zhead{width:100%; pointer-events:none; padding:0; color:var(--muted); font-weight:400} .toolbar .zhead::after{content:none}
+  .toolbar .zlb{display:flex !important} .toolbar .zlb small{display:inline}
+
+  body #panel{position:fixed; left:0; right:0; bottom:0; z-index:25; max-height:58dvh; overflow-y:auto; border-width:2px 0 0 0; border-radius:26px 26px 0 0;
+    padding-bottom:calc(22px + env(safe-area-inset-bottom, 0px)); transform:translateY(110%); visibility:hidden; transition:transform .28s ease, visibility 0s .28s; box-shadow:0 -10px 30px rgba(0,0,0,.28)}
+  body.sheet-panel #panel{transform:none; visibility:visible; transition:transform .28s ease}
+  .row{min-height:48px}
+}
+
 /* 車程分區 */
 .zf{transition:opacity .2s}
 .zf-fill{opacity:.9} .zf-dots{opacity:1; pointer-events:none} .zf.off{opacity:0}
@@ -238,7 +283,8 @@ h1{font-size:clamp(24px,3.4vw,32px); line-height:1.25; margin:0; font-weight:400
     <p class="sub">本島加藍夢島、佩妮達島。滾輪或雙指縮放、拖曳移動，圖示太近時會合併成數字，放大就會散開。位置依地區示意，不是精準座標。</p>
   </header>
 
-  <section class="toolbar" aria-label="篩選地點">
+  <section class="toolbar" id="toolbar" aria-label="篩選地點">
+    <div class="sheet-head"><strong>篩選・搜尋</strong><button class="p-close" type="button" id="tbClose" aria-label="關閉篩選">✕</button></div>
     <fieldset class="cats" id="cats"><legend class="sr">地點類型（可複選）</legend></fieldset>
     <fieldset class="cats subs" id="subs" hidden><legend class="sr">細分類型（可複選）</legend></fieldset>
     <div class="row2">
@@ -251,7 +297,10 @@ h1{font-size:clamp(24px,3.4vw,32px); line-height:1.25; margin:0; font-weight:400
       <button class="btn tool" type="button" id="editBtn" aria-pressed="false">調整位置</button>
       <span class="count" id="count" aria-live="polite"></span>
     </div>
+    <button class="btn done" type="button" id="tbDone">看地圖</button>
   </section>
+
+  <nav id="dock" aria-label="手機操作列"><button class="main" type="button" id="dkFilter">篩選・搜尋</button><button type="button" id="dkList">清單</button><button type="button" id="dkFit">全圖</button></nav>
 
   <div class="mapbox" id="mapbox">
     <svg id="map" viewBox="0 80 1400 900" role="img" aria-label="峇里島、藍夢島與佩妮達島的插畫地圖"></svg>
@@ -553,7 +602,8 @@ function clampView(v){
   const fw = fitW();
   const w = Math.min(fw, Math.max(fw / MAXZ, v.w)), h = viewH(w);
   const cx = w >= BW ? 700 : Math.min(BW - w/2, Math.max(w/2, v.cx));
-  const cy = h >= BH ? CY : Math.min(980 - h/2, Math.max(80 + h/2, v.cy));
+  const slack = isMob() ? h*0.3 : 0;   // 手機：多留一點空間，讓選到的點能移到面板上方
+  const cy = h >= BH ? Math.min(CY + slack, Math.max(CY - slack, v.cy)) : Math.min(980 - h/2 + slack, Math.max(80 + h/2 - slack, v.cy));
   return {cx, cy, w};
 }
 function metrics(){
@@ -687,6 +737,7 @@ $('#zout').addEventListener('click', () => { const c = centerClient(); zoomAt(c[
 $('#zfit').addEventListener('click', () => flyTo(700, CY, fitW()));
 
 /* ===== 篩選狀態 ===== */
+let listOpen = false;
 let pinned = null, hover = null, query = '', regionSel = '', editMode = false, pinDrag = null;
 const sel = new Set(GROUPS.map(g => g.key));
 const SUBS = [...new Set(PLACES.map(p => p.sub).filter(Boolean))];
@@ -737,6 +788,8 @@ function syncChecks(){
 function updateCount(){
   const n = PLACES.filter(matches).length;
   $('#count').textContent = '顯示 '+n+' / '+PLACES.length+' 個地點';
+  $('#tbDone').textContent = '看地圖（'+n+' 個地點）';
+  $('#dkFilter').textContent = '篩選・搜尋' + (n < PLACES.length ? '（'+n+'）' : '');
 }
 function refresh(){ syncChecks(); $('#subs').hidden = !(SUBS.length > 1 && sel.has('hotel')); if(pinned && !matches(byId[pinned])) pinned = null; renderPins(); update(); updateCount(); }
 
@@ -838,7 +891,7 @@ function indexList(){
 function renderPanel(p){
   const el = $('#panel');
   if(!p){
-    el.innerHTML = '<h2>歡迎來到峇里島</h2><p class="hint">把滑鼠移到圖示上，這裡會顯示介紹。點一下可以固定，手機請直接點圖示。也可以從下面的清單挑地點，地圖會移過去。</p>' + indexList();
+    el.innerHTML = (isMob() ? '<button class="p-close" type="button" data-close aria-label="關閉清單">✕</button><h2>地點清單</h2><p class="hint">點一下地點，地圖會移過去並顯示介紹。</p>' : '<h2>歡迎來到峇里島</h2><p class="hint">把滑鼠移到圖示上，這裡會顯示介紹。點一下可以固定，也可以從下面的清單挑地點，地圖會移過去。</p>') + indexList();
     return;
   }
   const closeBtn = '<button class="p-close" type="button" data-close aria-label="關閉介紹視窗">✕</button>';
@@ -876,19 +929,23 @@ function update(){
   if(key !== lastShown || !cur){ renderPanel(cur); lastShown = key; }
   renderTip(cur);
   document.querySelectorAll('.pin').forEach(el => el.classList.toggle('is-pinned', el.dataset.id === pinned));
+  document.body.classList.toggle('sheet-panel', isMob() && (!!pinned || listOpen));
+}
+function isMob(){ return matchMedia('(max-width:999px)').matches; }
+/* 手機：把選到的點放在畫面上半部，避免被下方面板蓋住 */
+function flyToPin(p, w){
+  if(isMob()){ const h = viewH(w); flyTo(p.x, p.y + h*0.27, w); } else flyTo(p.x, p.y - 30, w);
 }
 function centerMapInView(){
   const r = $('#mapbox').getBoundingClientRect(), c = r.top + r.height/2;
   if(c > innerHeight*0.7 || c < innerHeight*0.3) window.scrollBy({top: c - innerHeight/2, behavior: reduceMotion() ? 'auto' : 'smooth'});
 }
-function focusPanel(){
-  if(matchMedia('(max-width:999px)').matches) $('#panel').scrollIntoView({behavior: reduceMotion() ? 'auto' : 'smooth', block:'nearest'});
-}
+function focusPanel(){}
 function selectPlace(id, fly){
-  pinned = id; hover = null;
+  pinned = id; hover = null; listOpen = false;
   renderPins(); update();
   const p = byId[id];
-  if(fly && p) flyTo(p.x, p.y - 30, Math.min(view.w, fitW() / 2.8));
+  if(fly && p) flyToPin(p, Math.min(view.w, fitW() / 2.8));
   focusPanel();
   if(!matchMedia('(max-width:999px)').matches) centerMapInView();
 }
@@ -935,10 +992,12 @@ svg.addEventListener('click', e => {
   const el = e.target.closest('.pin');
   if(el){
     const id = el.dataset.id;
-    pinned = pinned === id ? null : id; hover = null;
-    update();
-    if(pinned) focusPanel();
+    pinned = pinned === id ? null : id; hover = null; listOpen = false;
+    renderPins(); update();
+    if(pinned && isMob()) flyToPin(byId[id], view.w);
+    return;
   }
+  if(isMob()) closeSheets();
 });
 
 const panel = $('#panel');
@@ -948,10 +1007,23 @@ panel.addEventListener('click', e => {
   if(e.target.closest('[data-unpin]')){ pinned = null; renderPins(); update(); }
   if(e.target.closest('[data-close]')) closePanel();
 });
-function closePanel(){
-  pinned = null; hover = null; renderPins(); update();
-  if(matchMedia('(max-width:999px)').matches) $('#mapbox').scrollIntoView({behavior: reduceMotion() ? 'auto' : 'smooth', block:'start'});
-}
+function closePanel(){ pinned = null; hover = null; listOpen = false; renderPins(); update(); }
+function closeSheets(){ document.body.classList.remove('sheet-filter'); closePanel(); }
+$('#dkFilter').addEventListener('click', () => { document.body.classList.add('sheet-filter'); });
+$('#tbClose').addEventListener('click', () => document.body.classList.remove('sheet-filter'));
+$('#tbDone').addEventListener('click', () => document.body.classList.remove('sheet-filter'));
+$('#dkList').addEventListener('click', () => { pinned = null; listOpen = true; renderPins(); update(); });
+$('#dkFit').addEventListener('click', () => flyTo(700, CY, fitW()));
+/* 手機時，分區圖例放進篩選面板 */
+(function(){
+  const place = () => {
+    const lg = $('#zlegend'); if(!lg) return;
+    if(isMob()){ $('#toolbar').insertBefore(lg, $('#tbDone')); lg.classList.add('open'); }
+    else { $('#mapbox').appendChild(lg); lg.classList.toggle('open', matchMedia('(min-width:1000px)').matches); }
+  };
+  matchMedia('(max-width:999px)').addEventListener('change', () => { place(); update(); });
+  window.__placeLegend = place;
+})();
 document.addEventListener('keydown', e => { if(e.key === 'Escape' && (pinned || hover) && !editMode) closePanel(); });
 const hot = (e, on) => {
   const g = e.target.closest('[data-goto]');
@@ -985,6 +1057,7 @@ $('#placeBtn').addEventListener('click', () => setMode($('#placeBtn').getAttribu
   const box = $('#mapbox');
   box.insertAdjacentHTML('beforeend', '<div class="zlegend'+(matchMedia('(min-width:1000px)').matches ? ' open' : '')+'" id="zlegend" role="group" aria-label="車程分區"><button class="zhead" type="button" id="zhead" aria-expanded="'+matchMedia('(min-width:1000px)').matches+'">車程分區</button>'
     + Object.keys(ZDEF).map(k => '<button class="zlb" type="button" data-z="'+k+'" aria-pressed="true" style="--zc:'+ZDEF[k].d+'"><i></i><span>'+ZDEF[k].name+' <small>'+ZDEF[k].note+'</small></span></button>').join('') + '</div>');
+  window.__placeLegend();
   $('#zlegend').addEventListener('click', e => {
     if(e.target.closest('#zhead')){ const o = $('#zlegend').classList.toggle('open'); $('#zhead').setAttribute('aria-expanded', String(o)); return; }
     const bt = e.target.closest('.zlb'); if(!bt) return;
